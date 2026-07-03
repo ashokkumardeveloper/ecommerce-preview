@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiddies Mate · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Flutter-buildable admin: Container/BoxDecoration, Row/Column/Wrap, ListView, DataTable-style rows,
+     bar chart = sized Containers (fl_chart), Switch, DropdownButton, Dialog(modal), LinearGradient, BoxShadow.
+     No backdrop-filter, no background-clip:text, no organic blob radius, no keyframe morphing. */
+  :root{
+    /* THEME — Kiddies Mate (violet + orange) */
+    --pri:#7c3aed; --pri-d:#5b21b6; --acc:#f97316; --acc-d:#ea580c;
+    --side:#2e1065; --side-txt:#d8ccf0; --side-act:#a78bfa;
+    --bg:#f7f5fd; --card:#fff; --ink:#2e2a45; --muted:#8b83a5; --line:#ece7f6;
+    --green:#16a34a; --amber:#d97706; --red:#dc2626;
+    --font-head:'Baloo 2',cursive; --font-body:'Nunito',sans-serif;
+    --shadow:0 6px 18px rgba(124,58,237,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.45}
+  h1,h2,h3,h4,.brand-name{font-family:var(--font-head)}
+  a{text-decoration:none;color:inherit}
+  img{display:block;max-width:100%}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit}
+  .hidden{display:none!important}
+
+  .admin{display:flex;min-height:100vh}
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{width:240px;background:var(--side);color:var(--side-txt);flex:0 0 auto;display:flex;flex-direction:column;
+    position:sticky;top:0;height:100vh;padding:20px 14px}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+  .brand .b-emoji{font-size:26px}
+  .brand-name{font-size:21px;font-weight:800;color:#fff}
+  .brand .pill{background:var(--acc);color:#fff;font-family:var(--font-body);font-weight:800;font-size:9px;
+    letter-spacing:1px;padding:3px 7px;border-radius:5px}
+  .side-nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .side-nav button{display:flex;align-items:center;gap:12px;background:none;border:none;color:var(--side-txt);
+    font-weight:700;font-size:14.5px;padding:12px 14px;border-radius:10px;text-align:left;transition:.15s}
+  .side-nav button .ic{font-size:18px}
+  .side-nav button:hover{background:rgba(255,255,255,.08)}
+  .side-nav button.active{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 3px 0 0 var(--side-act)}
+  .view-store{margin-top:auto;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);
+    color:#fff;font-weight:700;font-size:13.5px;padding:12px 14px;border-radius:10px}
+  .view-store:hover{background:rgba(255,255,255,.16)}
+
+  /* ---------- CONTENT ---------- */
+  .content{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(247,245,253,.92);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:14px;padding:16px 24px}
+  .mobile-brand{display:none;align-items:center;gap:8px;font-family:var(--font-head);font-weight:800;font-size:18px}
+  .topbar h1{font-size:24px;font-weight:700}
+  .admin-chip{margin-left:auto;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+    padding:6px 12px 6px 6px;border-radius:999px;box-shadow:var(--shadow)}
+  .admin-chip .av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--acc));
+    color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+  .admin-chip b{font-size:13px}.admin-chip small{color:var(--muted);font-size:11px;font-weight:700;display:block;line-height:1}
+  .mtabs{display:none;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none}
+  .mtabs::-webkit-scrollbar{display:none}
+  .mtabs button{flex:0 0 auto;background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:800;
+    font-size:13px;padding:8px 16px;border-radius:999px}
+  .mtabs button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .view{display:none;padding:22px 24px 40px}
+  .view.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- KPI CARDS ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .kpi .k-top{display:flex;align-items:center;justify-content:space-between}
+  .kpi .k-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+  .kpi .k-trend{font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px}
+  .kpi .k-trend.up{background:#dcfce7;color:var(--green)} .kpi .k-trend.down{background:#fee2e2;color:var(--red)}
+  .kpi b{font-family:var(--font-head);font-size:30px;display:block;margin-top:12px}
+  .kpi small{color:var(--muted);font-weight:700}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .panel-h h3{font-size:18px}
+  .panel-h a,.panel-h .link{color:var(--pri);font-weight:800;font-size:13px;background:none;border:none}
+  .grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
+
+  /* chart */
+  .chart{display:flex;align-items:flex-end;gap:12px;height:180px;padding-top:10px}
+  .chart .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+  .chart .bar{width:100%;max-width:40px;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--pri),var(--acc));position:relative}
+  .chart .bar span{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--muted)}
+  .chart .day{font-size:11px;font-weight:800;color:var(--muted)}
+
+  /* mini list rows */
+  .mini{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .mini:last-child{border:none}
+  .mini .m-img{width:42px;height:42px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto}
+  .mini .m-img img{width:100%;height:100%;object-fit:cover}
+  .mini .m-main{flex:1;min-width:0}
+  .mini .m-name{font-weight:800;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini .m-sub{color:var(--muted);font-weight:700;font-size:12px}
+  .mini .m-right{font-weight:800;font-size:13.5px;text-align:right}
+  .stock-red{color:var(--red)}
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;min-width:220px;flex:1;max-width:340px}
+  .search input{border:none;outline:none;background:none;font-size:14px;width:100%;font-weight:600}
+  .fpills{display:flex;gap:6px;flex-wrap:wrap}
+  .fpill{background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:800;font-size:12.5px;
+    padding:8px 14px;border-radius:999px}
+  .fpill.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .btn{background:var(--pri);color:#fff;border:none;font-weight:800;font-size:13.5px;padding:10px 18px;border-radius:10px;
+    display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{background:var(--pri-d)}
+  .btn.acc{background:var(--acc)} .btn.acc:hover{background:var(--acc-d)}
+  .btn.ghost{background:#fff;color:var(--pri);border:1.5px solid var(--line)}
+  .btn.block{width:100%;justify-content:center;padding:14px}
+
+  /* ---------- PRODUCT / ORDER ROWS ---------- */
+  .prow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:12px 14px;margin-bottom:10px}
+  .prow .p-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto}
+  .prow .p-img img{width:100%;height:100%;object-fit:cover}
+  .prow .p-main{flex:1;min-width:150px}
+  .prow .p-name{font-weight:800;font-size:14.5px}
+  .prow .p-attr{color:var(--muted);font-weight:700;font-size:12px;margin-top:2px}
+  .prow .p-price{font-family:var(--font-head);font-size:16px;margin-top:2px}
+  .prow .p-price s{font-family:var(--font-body);color:var(--muted);font-weight:600;font-size:12px;margin-left:5px}
+  .badge{font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap}
+  .badge.in{background:#dcfce7;color:var(--green)} .badge.low{background:#fef3c7;color:var(--amber)} .badge.out{background:#fee2e2;color:var(--red)}
+  .switch{width:44px;height:24px;border-radius:999px;background:#d9d2ea;border:none;position:relative;transition:.2s;flex:0 0 auto}
+  .switch.on{background:var(--green)}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.on::after{left:22px}
+  .icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:15px;display:grid;place-items:center}
+  .icon-btn:hover{background:var(--bg)}
+  .p-acts{display:flex;gap:8px;align-items:center}
+
+  /* order row */
+  .orow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:14px;margin-bottom:10px}
+  .orow .o-id{font-weight:800;font-size:14px}
+  .orow .o-cust{color:var(--muted);font-weight:700;font-size:12.5px;margin-top:2px}
+  .orow .o-mid{flex:1;min-width:150px}
+  .orow .o-items{color:var(--muted);font-weight:700;font-size:12.5px}
+  .orow .o-total{font-family:var(--font-head);font-size:16px}
+  .st{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;white-space:nowrap;display:inline-block}
+  .st.pending{background:#fef3c7;color:#b45309}
+  .st.confirmed{background:#e0e7ff;color:#4338ca}
+  .st.packed{background:#ede9fe;color:#6d28d9}
+  .st.shipped{background:#dbeafe;color:#1d4ed8}
+  .st.out-for-delivery{background:#cffafe;color:#0e7490}
+  .st.delivered{background:#dcfce7;color:#15803d}
+  .st.cancelled{background:#fee2e2;color:#b91c1c}
+
+  /* ---------- ORDER DETAIL ---------- */
+  .od-back{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--pri);font-weight:800;font-size:14px;margin-bottom:14px}
+  .od-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+  .od-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .od-head h2{font-size:24px}
+  .od-head .od-meta{color:var(--muted);font-weight:700;font-size:13px;margin-top:2px}
+  .od-status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .od-status-row select{border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-weight:700;font-size:13px;background:#fff}
+  .od-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+  .od-item:last-child{border:none}
+  .od-item .oi-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto}
+  .od-item .oi-img img{width:100%;height:100%;object-fit:cover}
+  .od-item .oi-main{flex:1}
+  .od-item .oi-name{font-weight:800;font-size:14px}
+  .od-item .oi-attr{color:var(--muted);font-weight:700;font-size:12px}
+  .od-item .oi-price{font-weight:800;text-align:right;white-space:nowrap}
+  .od-item .oi-price small{display:block;color:var(--muted);font-weight:700;font-size:11px}
+  .sum-line{display:flex;justify-content:space-between;padding:6px 0;font-weight:700;color:#4a4358;font-size:14px}
+  .sum-line.tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:12px;font-family:var(--font-head);font-size:19px;color:var(--ink)}
+  .sum-line .free{color:var(--green);font-weight:800}
+  .info-line{display:flex;gap:10px;padding:8px 0;font-size:13.5px}
+  .info-line .il-ic{width:22px;text-align:center}
+  .info-line b{font-weight:800}.info-line span{color:var(--muted);font-weight:600}
+  .card-title{font-family:var(--font-head);font-size:16px;margin-bottom:8px}
+  .tl{display:flex;flex-direction:column;margin-top:6px}
+  .tl .step{display:flex;gap:12px;position:relative}
+  .tl .dot{width:22px;height:22px;border-radius:50%;background:#ddd3ee;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;z-index:2;flex:0 0 auto}
+  .tl .step.done .dot{background:var(--green)}
+  .tl .step:not(:last-child)::before{content:"";position:absolute;left:10px;top:22px;height:100%;width:2px;background:#ddd3ee}
+  .tl .step.done:not(:last-child)::before{background:var(--green)}
+  .tl .s-info{padding:1px 0 16px}
+  .tl .s-info b{font-size:13.5px;color:var(--muted)}
+  .tl .step.done .s-info b{color:var(--ink)}
+  .tl .s-info small{display:block;color:var(--muted);font-weight:700;font-size:12px}
+  .cancel-banner{background:#fee2e2;color:#b91c1c;font-weight:800;padding:12px 14px;border-radius:10px;font-size:13.5px}
+  .stk-col{display:flex;flex-direction:column;gap:16px}
+
+  /* ---------- INVENTORY ---------- */
+  .inv-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .inv-chip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;box-shadow:var(--shadow)}
+  .inv-chip b{font-family:var(--font-head);font-size:22px;display:block}
+  .inv-chip small{color:var(--muted);font-weight:800;font-size:12px}
+  .inv-chip.in b{color:var(--green)} .inv-chip.low b{color:var(--amber)} .inv-chip.out b{color:var(--red)}
+  .stepper-mini{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .stepper-mini button{width:34px;height:34px;border:none;background:var(--bg);font-weight:800;font-size:16px;color:var(--ink)}
+  .stepper-mini b{min-width:44px;text-align:center;font-size:15px}
+  .stock-num{font-family:var(--font-head);font-size:20px;min-width:40px;text-align:center}
+
+  /* ---------- MODAL ---------- */
+  .modal{position:fixed;inset:0;z-index:80;background:rgba(46,16,101,.45);display:none;place-items:center;padding:18px}
+  .modal.open{display:grid}
+  .modal-card{background:#fff;border-radius:18px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+  .modal-head{position:sticky;top:0;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .modal-head h3{font-size:20px}
+  .modal-x{border:none;background:var(--bg);width:34px;height:34px;border-radius:9px;font-size:16px}
+  .modal-body{padding:20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-weight:800;font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600;background:#fff;outline:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pri)}
+  .field textarea{resize:vertical;min-height:64px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .img-picker{display:flex;gap:14px;align-items:flex-start}
+  .img-preview{width:88px;height:88px;border-radius:12px;overflow:hidden;background:var(--bg);flex:0 0 auto;border:1px solid var(--line)}
+  .img-preview img{width:100%;height:100%;object-fit:cover}
+  .modal-foot{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px;justify-content:flex-end}
+  .hint{color:var(--muted);font-weight:700;font-size:11.5px;margin-top:4px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;
+    font-weight:800;padding:13px 22px;border-radius:12px;z-index:90;box-shadow:0 12px 30px rgba(0,0,0,.25);transition:.35s;font-size:14px}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .mobile-brand{display:flex}
+    .topbar h1{display:none}
+    .mtabs{display:flex}
+    .kpis{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .od-grid{grid-template-columns:1fr}
+    .frow{grid-template-columns:1fr}
+  }
+  @media(max-width:520px){ .prow .p-price,.orow .o-total{width:100%} }
+</style>
+</head>
+<body>
+<div class="admin">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand"><span class="b-emoji" id="sideEmoji">🧒</span><span class="brand-name" id="sideName">Kiddies Mate</span><span class="pill">ADMIN</span></div>
+    <nav class="side-nav" id="sideNav">
+      <button data-sec="dashboard" class="active"><span class="ic">📊</span> Dashboard</button>
+      <button data-sec="products"><span class="ic">📦</span> Products</button>
+      <button data-sec="orders"><span class="ic">🧾</span> Orders</button>
+      <button data-sec="inventory"><span class="ic">📥</span> Inventory</button>
+    </nav>
+    <a class="view-store" href="../index.html">🛍️ View Store</a>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="topbar">
+      <div class="mobile-brand"><span id="mEmoji">🧒</span> <span id="mName">Kiddies Mate</span></div>
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="admin-chip"><span class="av">AD</span><div><b>Admin</b><small>Store Manager</small></div></div>
+    </div>
+    <div class="mtabs" id="mtabs">
+      <button data-sec="dashboard" class="active">📊 Dashboard</button>
+      <button data-sec="products">📦 Products</button>
+      <button data-sec="orders">🧾 Orders</button>
+      <button data-sec="inventory">📥 Inventory</button>
+    </div>
+
+    <section id="view-dashboard" class="view active"></section>
+    <section id="view-products" class="view"></section>
+    <section id="view-orders" class="view"></section>
+    <section id="view-inventory" class="view"></section>
+    <section id="view-order-detail" class="view"></section>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal" id="prodModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modalTitle">Add Product</h3><button class="modal-x" onclick="closeProd()">✕</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Product Image</label>
+        <div class="img-picker">
+          <div class="img-preview"><img id="f_preview" alt=""></div>
+          <div style="flex:1">
+            <input id="f_img" placeholder="Paste image URL (optional)" oninput="updatePreview()">
+            <div class="hint">or type a keyword below to auto-fetch a photo</div>
+            <input id="f_q" placeholder="Image keyword e.g. baby,dress" style="margin-top:8px" oninput="updatePreview()">
+          </div>
+        </div>
+      </div>
+      <div class="field"><label>Product Name</label><input id="f_name" placeholder="e.g. Rainbow Ruffle Frock"></div>
+      <div class="frow">
+        <div class="field"><label>Category</label><select id="f_cat"></select></div>
+        <div class="field"><label>Brand</label><input id="f_brand" placeholder="e.g. TinyTwirl"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Selling Price (₹)</label><input id="f_price" type="number" placeholder="749"></div>
+        <div class="field"><label>MRP (₹)</label><input id="f_mrp" type="number" placeholder="1199"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Stock Qty</label><input id="f_stock" type="number" placeholder="42"></div>
+        <div class="field"><label>Color</label><input id="f_color" placeholder="e.g. Pink"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Material</label><input id="f_material" placeholder="e.g. Cotton"></div>
+        <div class="field"><label>Sizes (comma separated)</label><input id="f_sizes" placeholder="0-3M, 3-6M, 1-2Y"></div>
+      </div>
+      <div class="field"><label>Tags (comma separated)</label><input id="f_tags" placeholder="Bestseller, New"></div>
+      <div class="field"><label>Description</label><textarea id="f_desc" placeholder="Short product description…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeProd()">Cancel</button>
+      <button class="btn" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG START ===================== */
+const BRAND={ name:'Kiddies Mate', emoji:'🧒', cur:'₹', prefix:'KM' };
+const CATEGORIES=['Dress','Toys','Footwear','Wear'];
+let PRODUCTS=[
+  {id:1,name:"Rainbow Ruffle Frock",cat:"Dress",price:749,mrp:1199,q:"baby,dress",lock:11,stock:42,active:true,brand:"TinyTwirl",color:"Pink",material:"Cotton",sizes:["0-3M","3-6M","6-12M","1-2Y","2-3Y"],tags:["Bestseller"],desc:"Twirl-worthy ruffle frock in soft breathable cotton."},
+  {id:2,name:"Cuddly Teddy Bear 30cm",cat:"Toys",price:599,mrp:899,q:"teddy,bear",lock:21,stock:7,active:true,brand:"CuddleCo",color:"Brown",material:"Plush",sizes:[],tags:["Top Rated"],desc:"Irresistibly huggable plush teddy with safe stitched eyes."},
+  {id:3,name:"First-Step Sneakers",cat:"Footwear",price:899,mrp:1299,q:"baby,shoes",lock:31,stock:23,active:true,brand:"StepUp",color:"White",material:"Mesh",sizes:["3","4","5","6"],tags:["New"],desc:"Featherlight sneakers with non-slip soles for first steps."},
+  {id:4,name:"Wooden Building Blocks",cat:"Toys",price:499,mrp:799,q:"wooden,toy",lock:41,stock:60,active:true,brand:"BrainyBlocks",color:"Multi",material:"Wood",sizes:[],tags:["Learning"],desc:"50-piece non-toxic wooden blocks for motor skills."},
+  {id:5,name:"Cotton Romper Onesie",cat:"Dress",price:399,mrp:599,q:"baby,clothes",lock:51,stock:5,active:true,brand:"SnuggleBee",color:"White",material:"Cotton",sizes:["0-3M","3-6M","6-12M"],tags:["Softest"],desc:"All-day comfy romper with easy snap buttons."},
+  {id:6,name:"Sunny Baby Sun Hat",cat:"Wear",price:249,mrp:399,q:"baby,hat",lock:61,stock:88,active:true,brand:"SunnyTot",color:"Yellow",material:"Cotton",sizes:["S","M","L"],tags:["Sale"],desc:"Wide-brim UPF sun hat for sunny outings."},
+  {id:7,name:"Plush Bunny Toy",cat:"Toys",price:449,mrp:699,q:"stuffed,toy",lock:71,stock:31,active:true,brand:"CuddleCo",color:"Cream",material:"Velboa",sizes:[],tags:["Cute"],desc:"Floppy-eared bunny, the perfect nap-time buddy."},
+  {id:8,name:"Party Tutu Dress",cat:"Dress",price:999,mrp:1599,q:"girl,dress",lock:81,stock:0,active:false,brand:"TinyTwirl",color:"Lilac",material:"Tulle",sizes:["1-2Y","2-3Y","3-4Y"],tags:["Festive"],desc:"Sparkly layered tutu dress for every celebration."},
+  {id:9,name:"Cozy Knit Booties",cat:"Footwear",price:329,mrp:499,q:"baby,booties",lock:91,stock:18,active:true,brand:"WarmToes",color:"Grey",material:"Wool",sizes:["0-6M","6-12M"],tags:["Warm"],desc:"Warm knitted booties that stay on tiny feet."},
+  {id:10,name:"Building Puzzle Train",cat:"Toys",price:699,mrp:1099,q:"toy,train",lock:101,stock:12,active:true,brand:"BrainyBlocks",color:"Multi",material:"Wood",sizes:[],tags:["STEM"],desc:"Pull-along train puzzle teaching numbers & shapes."},
+  {id:11,name:"Knit Cardigan Set",cat:"Wear",price:849,mrp:1299,q:"baby,sweater",lock:111,stock:9,active:true,brand:"WarmToes",color:"Peach",material:"Acrylic",sizes:["6-12M","1-2Y","2-3Y"],tags:["Winter"],desc:"Cosy button cardigan set to keep little ones warm."},
+  {id:12,name:"Soft Bibs Pack of 3",cat:"Wear",price:299,mrp:449,q:"baby,bib",lock:121,stock:140,active:true,brand:"SnuggleBee",color:"Assorted",material:"Cotton",sizes:["One Size"],tags:["Essential"],desc:"Absorbent waterproof-backed bibs for mealtimes."},
+];
+let ORDERS=[
+  {id:BRAND.prefix+'-482910',cust:"Aarav Sharma",phone:"+91 90000 11123",email:"aarav.s@example.com",addr:"14, Green Meadows, HSR Layout, Bengaluru, Karnataka – 560102",date:"28 Jun 2026",status:"Shipped",payment:"UPI",items:[{pid:2,qty:1},{pid:8,qty:1,size:"2-3Y"}]},
+  {id:BRAND.prefix+'-482887',cust:"Diya Patel",phone:"+91 90000 22456",email:"diya.p@example.com",addr:"7B, Sea Breeze Apts, Bandra West, Mumbai, Maharashtra – 400050",date:"27 Jun 2026",status:"Delivered",payment:"Card",items:[{pid:4,qty:2}]},
+  {id:BRAND.prefix+'-482863',cust:"Vivaan Reddy",phone:"+91 90000 33789",email:"vivaan.r@example.com",addr:"221, Jubilee Hills, Hyderabad, Telangana – 500033",date:"27 Jun 2026",status:"Pending",payment:"COD",items:[{pid:1,qty:1,size:"1-2Y"},{pid:6,qty:2,size:"M"}]},
+  {id:BRAND.prefix+'-482840',cust:"Ananya Iyer",phone:"+91 90000 44012",email:"ananya.i@example.com",addr:"5, Besant Nagar, Chennai, Tamil Nadu – 600090",date:"26 Jun 2026",status:"Packed",payment:"UPI",items:[{pid:3,qty:1,size:"5"}]},
+  {id:BRAND.prefix+'-482811',cust:"Kabir Nair",phone:"+91 90000 55345",email:"kabir.n@example.com",addr:"32, Marine Drive, Kochi, Kerala – 682031",date:"26 Jun 2026",status:"Out for Delivery",payment:"UPI",items:[{pid:12,qty:3},{pid:5,qty:1,size:"3-6M"}]},
+  {id:BRAND.prefix+'-482790',cust:"Saanvi Gupta",phone:"+91 90000 66678",email:"saanvi.g@example.com",addr:"88, Vasant Kunj, New Delhi – 110070",date:"25 Jun 2026",status:"Confirmed",payment:"Card",items:[{pid:10,qty:1},{pid:7,qty:1}]},
+  {id:BRAND.prefix+'-482771',cust:"Aditya Rao",phone:"+91 90000 77901",email:"aditya.r@example.com",addr:"19, Koregaon Park, Pune, Maharashtra – 411001",date:"25 Jun 2026",status:"Delivered",payment:"UPI",items:[{pid:11,qty:1,size:"1-2Y"}]},
+  {id:BRAND.prefix+'-482755',cust:"Ishaan Menon",phone:"+91 90000 88234",email:"ishaan.m@example.com",addr:"3, Beach Road, Kozhikode, Kerala – 673032",date:"24 Jun 2026",status:"Cancelled",payment:"COD",items:[{pid:9,qty:2,size:"6-12M"}]},
+  {id:BRAND.prefix+'-482740',cust:"Myra Joshi",phone:"+91 90000 99567",email:"myra.j@example.com",addr:"41, Malviya Nagar, Jaipur, Rajasthan – 302017",date:"24 Jun 2026",status:"Shipped",payment:"Card",items:[{pid:1,qty:1,size:"2-3Y"},{pid:2,qty:1}]},
+];
+const KPI_REVENUE_BASE=284750, KPI_ORDERS=128;
+const WEEK=[52,68,60,84,74,96,63];
+/* ===================== CONFIG END ===================== */
+
+const STATUS=['Pending','Confirmed','Packed','Shipped','Out for Delivery','Delivered'];
+const $=id=>document.getElementById(id);
+const money=n=>BRAND.cur+n.toLocaleString('en-IN');
+const slug=s=>s.toLowerCase().replace(/ /g,'-');
+const P=id=>PRODUCTS.find(p=>p.id===id);
+function prodImg(p,sz){const s=sz||200;return p.img?p.img:`https://loremflickr.com/${s}/${s}/${p.q||'product'}?lock=${p.lock||500}`;}
+function imgTag(p,seed,sz){const s=sz||200;return `<img src="${prodImg(p,s)}" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${seed}/${s}/${s}'">`;}
+function stockBadge(st){return st<=0?'<span class="badge out">Out of Stock</span>':st<10?'<span class="badge low">Low · '+st+'</span>':'<span class="badge in">In Stock · '+st+'</span>';}
+function orderTotals(o){let sub=0,mrp=0,count=0;o.items.forEach(i=>{const p=P(i.pid);if(!p)return;sub+=p.price*i.qty;mrp+=p.mrp*i.qty;count+=i.qty;});return{sub,mrp,save:mrp-sub,total:sub,count};}
+
+/* ---------- section switching ---------- */
+const TITLES={dashboard:'Dashboard',products:'Products',orders:'Orders',inventory:'Inventory'};
+function showSection(sec){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-'+sec).classList.add('active');
+  $('pageTitle').textContent=TITLES[sec]||'';
+  document.querySelectorAll('#sideNav button, #mtabs button').forEach(b=>b.classList.toggle('active',b.dataset.sec===sec));
+  if(sec==='dashboard')renderDashboard();
+  if(sec==='products')renderProducts();
+  if(sec==='orders')renderOrders();
+  if(sec==='inventory')renderInventory();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#sideNav button, #mtabs button').forEach(b=>b.onclick=()=>showSection(b.dataset.sec));
+
+/* ---------- dashboard ---------- */
+function renderDashboard(){
+  const revenue=KPI_REVENUE_BASE, lowCount=PRODUCTS.filter(p=>p.stock<10).length;
+  const recent=ORDERS.slice(0,5);
+  $('view-dashboard').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#ede9fe">💰</div><span class="k-trend up">+12%</span></div><b>${money(revenue)}</b><small>Total Revenue</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#fef3c7">🧾</div><span class="k-trend up">+8%</span></div><b>${KPI_ORDERS}</b><small>Total Orders</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#dcfce7">📦</div><span class="k-trend up">+3</span></div><b>${PRODUCTS.length}</b><small>Products</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#fee2e2">⚠️</div><span class="k-trend down">${lowCount}</span></div><b>${lowCount}</b><small>Low-Stock Alerts</small></div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-h"><h3>Sales — This Week</h3><span class="link">₹ in thousands</span></div>
+        <div class="chart">${WEEK.map((v,i)=>`<div class="bar-wrap"><div class="bar" style="height:${v}%"><span>${v}</span></div><div class="day">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]}</div></div>`).join('')}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>Recent Orders</h3><button class="link" onclick="showSection('orders')">View all</button></div>
+        ${recent.map(o=>{const t=orderTotals(o);return `<div class="mini" style="cursor:pointer" onclick="openOrder('${o.id}')"><div class="m-main"><div class="m-name">#${o.id}</div><div class="m-sub">${o.cust}</div></div><div class="m-right">${money(t.total)}<br><span class="st ${slug(o.status)}">${o.status}</span></div></div>`}).join('')}
+      </div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-h"><h3>⚠️ Low Stock Items</h3><button class="link" onclick="showSection('inventory')">Manage</button></div>
+      ${PRODUCTS.filter(p=>p.stock<10).map(p=>`<div class="mini"><div class="m-img">${imgTag(p,'d'+p.id,80)}</div><div class="m-main"><div class="m-name">${p.name}</div><div class="m-sub">${p.cat} · ${p.brand}</div></div><div class="m-right stock-red">${p.stock===0?'Out of stock':p.stock+' left'}</div></div>`).join('')||'<div class="mini"><div class="m-main"><div class="m-sub">All good — nothing low on stock 🎉</div></div></div>'}
+    </div>`;
+}
+
+/* ---------- products ---------- */
+let pSearch='', pCat='All';
+function renderProducts(){
+  $('view-products').innerHTML=`
+    <div class="toolbar">
+      <div class="search">🔍<input placeholder="Search products…" value="${pSearch}" oninput="pSearch=this.value;paintProducts()"></div>
+      <div class="fpills" id="pPills">${['All',...CATEGORIES].map(c=>`<button class="fpill ${pCat===c?'active':''}" onclick="pCat='${c}';renderProducts()">${c}</button>`).join('')}</div>
+      <button class="btn" style="margin-left:auto" onclick="openProd()">＋ Add Product</button>
+    </div>
+    <div id="pList"></div>`;
+  paintProducts();
+}
+function paintProducts(){
+  const q=pSearch.toLowerCase().trim();
+  const list=PRODUCTS.filter(p=>(pCat==='All'||p.cat===pCat)&&(q===''||p.name.toLowerCase().includes(q)||(p.brand||'').toLowerCase().includes(q)));
+  $('pList').innerHTML=list.length?list.map(p=>`
+    <div class="prow">
+      <div class="p-img">${imgTag(p,'p'+p.id,120)}</div>
+      <div class="p-main">
+        <div class="p-name">${p.name}</div>
+        <div class="p-attr">${p.cat} · ${p.brand||'—'}${p.color?' · '+p.color:''}${p.sizes&&p.sizes.length?' · '+p.sizes.length+' sizes':''}</div>
+        <div class="p-price">${money(p.price)}<s>${money(p.mrp)}</s></div>
+      </div>
+      ${stockBadge(p.stock)}
+      <button class="switch ${p.active?'on':''}" title="Active" onclick="toggleActive(${p.id})"></button>
+      <div class="p-acts">
+        <button class="icon-btn" title="Edit" onclick="openProd(${p.id})">✏️</button>
+        <button class="icon-btn" title="Delete" onclick="delProduct(${p.id})">🗑️</button>
+      </div>
+    </div>`).join(''):'<div class="panel" style="text-align:center;color:var(--muted);font-weight:800">No products found</div>';
+}
+function toggleActive(id){const p=P(id);p.active=!p.active;paintProducts();showToast(p.active?'Product activated':'Product hidden');}
+function delProduct(id){const p=P(id);if(!confirm('Delete "'+p.name+'"?'))return;PRODUCTS=PRODUCTS.filter(x=>x.id!==id);paintProducts();showToast('Product deleted');}
+
+/* ---------- product modal ---------- */
+let editingId=null;
+function fillCatSelect(){$('f_cat').innerHTML=CATEGORIES.map(c=>`<option>${c}</option>`).join('');}
+function updatePreview(){const url=$('f_img').value.trim();const q=$('f_q').value.trim()||'product';$('f_preview').src=url||`https://loremflickr.com/200/200/${q}?lock=777`;$('f_preview').onerror=function(){this.onerror=null;this.src='https://picsum.photos/seed/prev/200/200'};}
+function openProd(id){
+  editingId=id||null; fillCatSelect();
+  const p=id?P(id):null;
+  $('modalTitle').textContent=id?'Edit Product':'Add Product';
+  $('f_img').value=p&&p.img?p.img:''; $('f_q').value=p?p.q||'':'';
+  $('f_name').value=p?p.name:''; $('f_cat').value=p?p.cat:CATEGORIES[0];
+  $('f_brand').value=p?p.brand||'':''; $('f_price').value=p?p.price:''; $('f_mrp').value=p?p.mrp:'';
+  $('f_stock').value=p?p.stock:''; $('f_color').value=p?p.color||'':''; $('f_material').value=p?p.material||'':'';
+  $('f_sizes').value=p&&p.sizes?p.sizes.join(', '):''; $('f_tags').value=p&&p.tags?p.tags.join(', '):''; $('f_desc').value=p?p.desc||'':'';
+  updatePreview(); $('prodModal').classList.add('open');
+}
+function closeProd(){$('prodModal').classList.remove('open');}
+function saveProduct(){
+  const name=$('f_name').value.trim(); const price=+$('f_price').value; const mrp=+$('f_mrp').value||price;
+  if(!name){showToast('Please enter a product name');return;}
+  if(!price){showToast('Please enter a price');return;}
+  const data={
+    name, cat:$('f_cat').value, price, mrp, stock:+$('f_stock').value||0,
+    brand:$('f_brand').value.trim(), color:$('f_color').value.trim(), material:$('f_material').value.trim(),
+    sizes:$('f_sizes').value.split(',').map(s=>s.trim()).filter(Boolean),
+    tags:$('f_tags').value.split(',').map(s=>s.trim()).filter(Boolean),
+    desc:$('f_desc').value.trim(),
+    img:$('f_img').value.trim()||null, q:$('f_q').value.trim()||name.toLowerCase().split(' ').slice(0,2).join(',')
+  };
+  if(editingId){Object.assign(P(editingId),data);showToast('Product updated ✓');}
+  else{const id=Math.max(0,...PRODUCTS.map(p=>p.id))+1;PRODUCTS.push({id,active:true,lock:500+id,...data});showToast('Product added ✓');}
+  closeProd(); renderProducts();
+}
+
+/* ---------- orders ---------- */
+let oFilter='All';
+function renderOrders(){
+  $('view-orders').innerHTML=`
+    <div class="toolbar"><div class="fpills">${['All',...STATUS,'Cancelled'].map(s=>`<button class="fpill ${oFilter===s?'active':''}" onclick="oFilter='${s}';renderOrders()">${s}</button>`).join('')}</div></div>
+    <div id="oList"></div>`;
+  const list=ORDERS.filter(o=>oFilter==='All'||o.status===oFilter);
+  $('oList').innerHTML=list.length?list.map(o=>{const t=orderTotals(o);const names=o.items.map(i=>P(i.pid)?P(i.pid).name:'').filter(Boolean).join(', ');
+    return `<div class="orow" onclick="openOrder('${o.id}')" style="cursor:pointer">
+      <div class="p-img" style="width:48px;height:48px;border-radius:10px;overflow:hidden;background:var(--bg)">${imgTag(P(o.items[0].pid),'ol'+o.id,80)}</div>
+      <div class="o-mid"><div class="o-id">#${o.id}</div><div class="o-cust">${o.cust} · ${o.date}</div><div class="o-items">${names}</div></div>
+      <div class="o-total">${money(t.total)}<div style="font-size:11px;color:var(--muted);font-weight:800;font-family:var(--font-body)">${t.count} item${t.count>1?'s':''}</div></div>
+      <span class="st ${slug(o.status)}">${o.status}</span>
+      <button class="btn ghost" onclick="event.stopPropagation();openOrder('${o.id}')">View</button>
+    </div>`}).join(''):'<div class="panel" style="text-align:center;color:var(--muted);font-weight:800">No orders in this status</div>';
+}
+
+/* ---------- order detail ---------- */
+function openOrder(id){
+  const o=ORDERS.find(x=>x.id===id); if(!o)return;
+  const t=orderTotals(o); const cancelled=o.status==='Cancelled';
+  const curIdx=STATUS.indexOf(o.status);
+  const timeline=cancelled?`<div class="cancel-banner">✕ This order was cancelled.</div>`:`<div class="tl">${STATUS.map((s,i)=>`<div class="step ${i<=curIdx?'done':''}"><div class="dot">${i<=curIdx?'✓':''}</div><div class="s-info"><b>${s}</b><small>${i===curIdx?'Current status':(i<curIdx?'Completed':'Pending')}</small></div></div>`).join('')}</div>`;
+  $('view-order-detail').innerHTML=`
+    <button class="od-back" onclick="showSection('orders')">← Back to Orders</button>
+    <div class="od-head">
+      <div><h2>Order #${o.id}</h2><div class="od-meta">Placed on ${o.date} · ${t.count} item${t.count>1?'s':''} · Paid via ${o.payment}</div></div>
+      <div class="od-status-row">
+        <span class="st ${slug(o.status)}">${o.status}</span>
+        <select onchange="setOrderStatus('${o.id}',this.value)">${['Pending','Confirmed','Packed','Shipped','Out for Delivery','Delivered','Cancelled'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select>
+        <button class="btn acc" onclick="showToast('Invoice sent to printer (demo)')">🖨️ Invoice</button>
+      </div>
+    </div>
+    <div class="od-grid">
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Items</div>
+          ${o.items.map(i=>{const p=P(i.pid);if(!p)return '';return `<div class="od-item">
+            <div class="oi-img">${imgTag(p,'od'+p.id,120)}</div>
+            <div class="oi-main"><div class="oi-name">${p.name}</div><div class="oi-attr">${p.brand||''}${i.size?' · Size: '+i.size:(p.color?' · '+p.color:'')} · Qty: ${i.qty}</div></div>
+            <div class="oi-price">${money(p.price*i.qty)}<small>${money(p.price)} each</small></div>
+          </div>`}).join('')}
+        </div>
+        <div class="panel">
+          <div class="card-title">Order Timeline</div>
+          ${timeline}
+        </div>
+      </div>
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Payment Summary</div>
+          <div class="sum-line"><span>Item Total (MRP)</span><span>${money(t.mrp)}</span></div>
+          <div class="sum-line"><span>Discount</span><span style="color:var(--green);font-weight:800">− ${money(t.save)}</span></div>
+          <div class="sum-line"><span>Delivery</span><span class="free">FREE</span></div>
+          <div class="sum-line tot"><span>Grand Total</span><span>${money(t.total)}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Customer</div>
+          <div class="info-line"><span class="il-ic">👤</span><div><b>${o.cust}</b></div></div>
+          <div class="info-line"><span class="il-ic">📞</span><span>${o.phone}</span></div>
+          <div class="info-line"><span class="il-ic">✉️</span><span>${o.email}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Shipping Address</div>
+          <div class="info-line"><span class="il-ic">📍</span><span>${o.addr}</span></div>
+          <div class="info-line"><span class="il-ic">💳</span><span>Payment: ${o.payment}</span></div>
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-order-detail').classList.add('active');
+  $('pageTitle').textContent='Order Detail';
+  window.scrollTo(0,0);
+}
+function setOrderStatus(id,val){const o=ORDERS.find(x=>x.id===id);o.status=val;openOrder(id);showToast('Status updated to '+val);}
+
+/* ---------- inventory ---------- */
+function renderInventory(){
+  const inC=PRODUCTS.filter(p=>p.stock>=10).length, lowC=PRODUCTS.filter(p=>p.stock>0&&p.stock<10).length, outC=PRODUCTS.filter(p=>p.stock===0).length;
+  $('view-inventory').innerHTML=`
+    <div class="inv-summary">
+      <div class="inv-chip in"><b>${inC}</b><small>In Stock</small></div>
+      <div class="inv-chip low"><b>${lowC}</b><small>Low Stock</small></div>
+      <div class="inv-chip out"><b>${outC}</b><small>Out of Stock</small></div>
+    </div>
+    <div id="invList"></div>`;
+  paintInventory();
+}
+function paintInventory(){
+  $('invList').innerHTML=PRODUCTS.map(p=>`
+    <div class="prow" style="${p.stock===0?'border-color:#fecaca':p.stock<10?'border-color:#fde68a':''}">
+      <div class="p-img">${imgTag(p,'i'+p.id,120)}</div>
+      <div class="p-main"><div class="p-name">${p.name}</div><div class="p-attr">${p.cat} · ${p.brand||'—'}</div></div>
+      ${stockBadge(p.stock)}
+      <div class="stepper-mini"><button onclick="adjStock(${p.id},-1)">−</button><b class="stock-num" style="${p.stock===0?'color:var(--red)':p.stock<10?'color:var(--amber)':'color:var(--green)'}">${p.stock}</b><button onclick="adjStock(${p.id},1)">＋</button></div>
+      <button class="btn ghost" onclick="adjStock(${p.id},25)">Restock +25</button>
+    </div>`).join('');
+}
+function adjStock(id,d){const p=P(id);p.stock=Math.max(0,p.stock+d);renderInventory();}
+
+let toastT;function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+
+/* init brand + first view */
+$('sideEmoji').textContent=BRAND.emoji;$('sideName').textContent=BRAND.name;$('mEmoji').textContent=BRAND.emoji;$('mName').textContent=BRAND.name;
+document.title=BRAND.name+' · Admin';
+showSection('dashboard');
+</script>
+</body>
+</html>

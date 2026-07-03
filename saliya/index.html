@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Saliya — Elegance for Every Woman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Flutter-mappable only: Container/BoxDecoration, LinearGradient, BoxShadow, ClipRRect,
+     Image.network(BoxFit.cover), GridView, Wrap, horizontal ListView, pinned SliverAppBar, bottom bars. */
+  :root{
+    --plum:#6d3b52; --plum-deep:#4a2439; --rose:#c9788f; --blush:#f7e7ec;
+    --gold:#c8a04b; --gold-soft:#e7d3a1; --ink:#2a2129; --muted:#8b7b83;
+    --bg:#fbf6f4; --card:#fff; --line:#efe3e6; --green:#2e7d55;
+    --shadow:0 10px 30px rgba(109,59,82,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  h1,h2,h3,h4,.logo{font-family:'Playfair Display',serif}
+  a{text-decoration:none;color:inherit}
+  img{max-width:100%;display:block}
+  button{font-family:inherit;cursor:pointer}
+  .hidden{display:none!important}
+  .app{max-width:1280px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative}
+  .thumb img,.ci-img img,.rt img,.pd-thumbs img,.circ img,.bm-img img,.bd-img img{width:100%;height:100%;object-fit:cover}
+
+  /* ---------- HEADER ---------- */
+  #appHeader{position:sticky;top:0;z-index:50;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .hbar{display:flex;align-items:center;gap:12px;padding:12px 16px}
+  .logo{font-size:26px;font-weight:700;letter-spacing:1px;color:var(--plum);line-height:1}
+  .logo small{font-family:'Poppins';font-size:8px;letter-spacing:4px;color:var(--gold);display:block;text-align:center;margin-top:1px;text-transform:uppercase}
+  .desk-menu{display:flex;gap:24px;margin-left:22px}
+  .desk-menu a{font-weight:400;color:var(--ink);font-size:14px;letter-spacing:.4px}
+  .h-icons{margin-left:auto;display:flex;align-items:center;gap:6px}
+  .h-ic{position:relative;width:42px;height:42px;border-radius:10px;border:none;background:#faf3f5;font-size:18px;display:grid;place-items:center;color:var(--ink)}
+  .h-ic .badge{position:absolute;top:-4px;right:-4px;background:var(--gold);color:#3a2e12;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:999px;display:grid;place-items:center;padding:0 4px}
+  .h-ic-label{display:none}
+  .searchwrap{padding:0 16px 12px}
+  .searchbar{display:flex;align-items:center;gap:10px;background:#f6eef1;border:1px solid #eaddE2;border-radius:10px;padding:11px 14px;color:var(--muted)}
+  .searchbar input{flex:1;border:none;outline:none;background:transparent;font-family:inherit;font-size:14.5px;font-weight:400;color:var(--ink)}
+  .searchbar .s-ic{font-size:17px}
+  .searchbar .s-right{display:flex;gap:14px;font-size:17px;color:var(--plum)}
+
+  /* ---------- SCREENS ---------- */
+  .screen{display:none;padding-bottom:80px}
+  .screen.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .subhead{position:sticky;top:0;z-index:50;background:#fff;display:flex;align-items:center;gap:14px;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+  .subhead .back{font-size:22px;background:none;border:none;color:var(--ink)}
+  .subhead h2{font-size:18px;flex:1;font-weight:600}
+  .subhead .sh-ic{font-size:19px;background:none;border:none;position:relative}
+  .subhead .sh-ic .badge{position:absolute;top:-6px;right:-8px;background:var(--gold);color:#3a2e12;font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:999px;display:grid;place-items:center;padding:0 4px}
+
+  /* ---------- CATEGORY STRIP ---------- */
+  .cat-strip{display:flex;gap:18px;overflow-x:auto;padding:16px 16px 6px;scrollbar-width:none}
+  .cat-strip::-webkit-scrollbar{display:none}
+  .cat-i{flex:0 0 auto;text-align:center;width:68px;background:none;border:none}
+  .cat-i .circ{width:64px;height:64px;border-radius:50%;overflow:hidden;margin:0 auto 7px;border:1px solid var(--line);background:var(--blush)}
+  .cat-i b{font-size:11.5px;font-weight:500;color:var(--ink);display:block;line-height:1.15}
+
+  /* ---------- BANNERS ---------- */
+  .banner-mobile{display:flex;gap:12px;overflow-x:auto;padding:10px 16px 4px;scrollbar-width:none}
+  .banner-mobile::-webkit-scrollbar{display:none}
+  .bm-card{flex:0 0 86%;border-radius:14px;padding:22px;color:#fff;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:center}
+  .bm-img{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:82px;height:82px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.5)}
+  .bm-card small{font-weight:500;letter-spacing:2px;text-transform:uppercase;font-size:10.5px;opacity:.9}
+  .bm-card b{font-family:'Playfair Display';font-size:25px;font-weight:600;display:block;margin:6px 0;max-width:60%;line-height:1.1}
+  .bm-card .go{background:#fff;color:var(--plum);align-self:flex-start;font-weight:600;font-size:12.5px;padding:8px 18px;border-radius:2px;margin-top:8px;border:none;letter-spacing:.5px}
+  .b1{background:linear-gradient(135deg,var(--plum),var(--plum-deep))}
+  .b2{background:linear-gradient(135deg,var(--rose),#a85069)}
+  .b3{background:linear-gradient(135deg,#a9823a,var(--gold))}
+  .banner-desktop{display:none;margin:16px;border-radius:6px;overflow:hidden;background:linear-gradient(120deg,var(--blush),#fff);padding:44px;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center;box-shadow:var(--shadow)}
+  .banner-desktop .eyebrow{color:var(--gold);letter-spacing:4px;text-transform:uppercase;font-size:12px;font-weight:600;margin-bottom:14px}
+  .banner-desktop h1{font-size:52px;line-height:1.02;font-weight:600}
+  .banner-desktop h1 i{color:var(--rose)}
+  .banner-desktop p{color:var(--muted);font-weight:300;font-size:16px;margin:16px 0 24px;max-width:400px}
+  .banner-desktop .cta{background:var(--plum);color:#fff;border:none;font-weight:500;font-size:15px;padding:14px 30px;border-radius:2px;letter-spacing:.5px;font-family:'Poppins'}
+  .bd-art{display:grid;place-items:center}
+  .bd-img{width:100%;max-width:340px;aspect-ratio:3/4;border-radius:180px 180px 6px 6px;overflow:hidden;box-shadow:0 20px 44px rgba(109,59,82,.25)}
+
+  /* ---------- FILTER / SORT ---------- */
+  .sec-title{padding:18px 16px 4px;display:flex;align-items:baseline;justify-content:space-between}
+  .sec-title h2{font-size:22px;font-weight:600}
+  .sec-title span{color:var(--muted);font-weight:400;font-size:13px}
+  .toolbar{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;position:sticky;top:0;background:var(--bg);z-index:20}
+  .toolbar::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:400;padding:8px 16px;border-radius:2px;font-size:13px;letter-spacing:.4px}
+  .chip.active{background:var(--plum);color:#fff;border-color:var(--plum)}
+  .chip.tool{display:flex;align-items:center;gap:6px;color:var(--ink)}
+
+  /* ---------- GRID (Meesho style) ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 8px 20px}
+  .card{background:#fff;border-radius:6px;overflow:hidden;position:relative}
+  .card .thumb{aspect-ratio:3/4;position:relative;background:var(--blush);overflow:hidden}
+  .card .tag{position:absolute;top:10px;left:0;background:var(--plum);color:#fff;font-size:9.5px;font-weight:500;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;z-index:2}
+  .card .tag.gold{background:var(--gold);color:#3a2e12}
+  .card .wish{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);border:none;font-size:14px;display:grid;place-items:center;z-index:2}
+  .card .wish.on{background:var(--rose);color:#fff}
+  .c-info{padding:9px 11px 13px}
+  .c-info .cname{font-weight:500;font-size:13px;color:#3a2f34;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  .c-price{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .c-price .now{font-family:'Playfair Display';font-size:18px;font-weight:700;color:var(--ink)}
+  .c-price .was{font-size:12px;color:var(--muted);text-decoration:line-through}
+  .c-price .off{font-size:11.5px;color:var(--green);font-weight:600}
+  .c-deliv{font-size:10.5px;color:var(--muted);font-weight:500;margin-top:5px;background:#f6eef1;display:inline-block;padding:2px 7px;border-radius:3px}
+  .c-rate{display:flex;align-items:center;gap:6px;margin-top:9px}
+  .rpill{background:var(--green);color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:3px;display:inline-flex;gap:3px;align-items:center}
+  .c-rate small{color:var(--muted);font-size:11px}
+
+  /* ---------- PRODUCT DETAIL ---------- */
+  .pd-media{background:#fff;padding:0 0 12px;position:relative}
+  .pd-main{aspect-ratio:3/4;position:relative;background:var(--blush);overflow:hidden}
+  .pd-main img{width:100%;height:100%;object-fit:cover}
+  .pd-main .dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
+  .pd-main .dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.6)}
+  .pd-main .dots i.on{background:#fff;width:18px;border-radius:6px}
+  .pd-thumbs{display:flex;gap:8px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none}
+  .pd-thumbs::-webkit-scrollbar{display:none}
+  .pd-thumbs button{flex:0 0 auto;width:58px;height:72px;border-radius:4px;border:1.5px solid var(--line);overflow:hidden;background:var(--blush);padding:0}
+  .pd-thumbs button.sel{border-color:var(--plum)}
+  .pd-info{background:#fff;padding:18px 16px 20px;margin-top:8px}
+  .pd-price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .pd-price .now{font-family:'Playfair Display';font-size:28px;font-weight:700}
+  .pd-price .was{color:var(--muted);text-decoration:line-through}
+  .pd-price .off{color:var(--green);font-weight:600;font-size:15px}
+  .pd-tax{font-size:12px;color:var(--muted);margin-top:2px}
+  .pd-name{font-weight:500;font-size:17px;margin-top:10px;color:#3a2f34}
+  .pd-rate{display:inline-flex;align-items:center;gap:8px;margin-top:10px}
+  .pd-rate small{color:var(--muted)}
+  .blockt{font-family:'Playfair Display';font-size:18px;font-weight:600;margin:20px 0 10px}
+  .swatch{display:flex;gap:10px}
+  .swatch span{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+  .swatch span.sel{box-shadow:0 0 0 2px var(--plum)}
+  .sizes{display:flex;gap:10px;flex-wrap:wrap}
+  .sizes button{min-width:46px;height:44px;padding:0 14px;border:1px solid var(--line);background:#fff;border-radius:3px;font-weight:500;font-size:14px;color:var(--ink)}
+  .sizes button.sel{border-color:var(--plum);background:#f6eef1;color:var(--plum)}
+  .inforow{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+  .inforow .e{font-size:20px}
+  .inforow b{font-size:14px;font-weight:600}
+  .inforow small{color:var(--muted);display:block;font-size:12.5px;font-weight:300}
+  .details-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .details-list li{display:flex;gap:8px;font-weight:400;color:#5c4f55;font-size:14px}
+  .details-list li::before{content:"•";color:var(--gold);font-weight:900}
+  .rev-summary{display:flex;gap:18px;align-items:center;background:#faf3f5;border-radius:8px;padding:16px}
+  .rev-big{text-align:center}
+  .rev-big b{font-family:'Playfair Display';font-size:36px;color:var(--ink);display:block;line-height:1}
+  .rev-big .stars{color:var(--gold);font-size:14px}
+  .rev-big small{color:var(--muted)}
+  .rev-bars{flex:1;display:flex;flex-direction:column;gap:4px}
+  .rev-bars .bar{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;color:var(--muted)}
+  .rev-bars .track{flex:1;height:6px;background:#eaddE2;border-radius:3px;overflow:hidden}
+  .rev-bars .fill{height:100%;background:var(--gold)}
+  .review{border-bottom:1px solid var(--line);padding:14px 0}
+  .review .rev-top{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+  .review .rpill{font-size:10px}
+  .review b{font-size:13.5px;font-weight:600}
+  .review p{color:#5c4f55;font-weight:300;font-size:13.5px}
+  .review .who{color:var(--muted);font-weight:400;font-size:12px;margin-top:3px}
+  .related{padding:10px 0 0}
+  .rel-scroll{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;scrollbar-width:none}
+  .rel-scroll::-webkit-scrollbar{display:none}
+  .rel-card{flex:0 0 150px;background:#fff;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+  .rel-card .rt{aspect-ratio:3/4;background:var(--blush);overflow:hidden}
+  .rel-card .ri{padding:8px 10px 12px}
+  .rel-card .rn{font-weight:500;font-size:12.5px;color:#3a2f34;line-height:1.25;height:2.5em;overflow:hidden}
+  .rel-card .rp{font-family:'Playfair Display';font-weight:700;margin-top:4px}
+  .rel-card .rp s{font-family:'Poppins';color:var(--muted);font-weight:400;font-size:11px;margin-left:4px}
+
+  .actionbar{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.1);display:flex;max-width:1280px;margin:0 auto}
+  .actionbar button{flex:1;border:none;padding:16px;font-size:14.5px;font-weight:600;letter-spacing:.5px}
+  .ab-cart{background:#fff;color:var(--plum);box-shadow:inset 0 0 0 1.5px var(--plum)}
+  .ab-buy{background:var(--gold);color:#3a2e12}
+  .ab-single{background:var(--plum);color:#fff}
+
+  /* ---------- CART / CHECKOUT ---------- */
+  .pad{padding:16px}
+  .cart-item{display:grid;grid-template-columns:76px 1fr auto;gap:12px;background:#fff;border-radius:8px;padding:12px;margin-bottom:10px}
+  .cart-item .ci-img{width:76px;height:92px;border-radius:6px;overflow:hidden;background:var(--blush)}
+  .cart-item .cn{font-weight:500;font-size:14px;color:#3a2f34;line-height:1.25}
+  .cart-item .cmeta{color:var(--muted);font-size:12px;margin-top:2px}
+  .cart-item .cp{font-family:'Playfair Display';font-weight:700;font-size:16px;margin-top:6px}
+  .cart-item .cp s{font-family:'Poppins';color:var(--muted);font-weight:400;font-size:12px;text-decoration:line-through;margin-left:4px}
+  .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-top:8px}
+  .qty button{width:30px;height:30px;border:none;background:#faf3f5;font-weight:600;font-size:16px;color:var(--ink)}
+  .qty span{min-width:34px;text-align:center;font-weight:600;font-size:14px}
+  .cart-item .rm{background:none;border:none;color:var(--muted);font-size:17px;align-self:flex-start}
+  .price-card{background:#fff;border-radius:8px;padding:18px;margin-top:6px}
+  .price-card h4{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-family:'Poppins';font-weight:600}
+  .price-line{display:flex;justify-content:space-between;padding:6px 0;font-weight:400;color:#4a3d43;font-size:14px}
+  .price-line.tot{border-top:1px dashed var(--line);margin-top:8px;padding-top:12px;font-family:'Playfair Display';font-size:19px;font-weight:700;color:var(--ink)}
+  .price-line .free{color:var(--green);font-weight:600}
+  .save-note{background:#f0f7f2;color:var(--green);font-weight:600;font-size:13px;padding:11px;border-radius:6px;margin-top:10px;text-align:center}
+  .empty{text-align:center;color:var(--muted);font-weight:400;padding:70px 20px}
+  .empty .e{font-size:60px;display:block;margin-bottom:12px}
+  .empty button{margin-top:16px;background:var(--plum);color:#fff;border:none;padding:13px 28px;border-radius:2px;font-weight:500;font-size:14px;letter-spacing:.5px}
+  .addr-card{background:#fff;border-radius:8px;padding:16px;display:flex;gap:12px}
+  .addr-card .home-ic{font-size:20px}
+  .addr-card b{font-size:15px;font-weight:600}
+  .addr-card .tagd{background:#f6eef1;color:var(--plum);font-size:10px;font-weight:600;padding:2px 8px;border-radius:3px;margin-left:6px;text-transform:uppercase}
+  .addr-card p{color:var(--muted);font-weight:300;font-size:13px;margin-top:3px}
+  .addr-card .change{margin-left:auto;color:var(--plum);font-weight:600;font-size:13px;background:none;border:none;align-self:flex-start}
+  .pay-opt{display:flex;align-items:center;gap:12px;background:#fff;padding:14px 16px;border-radius:8px;margin-bottom:8px;border:1.5px solid transparent}
+  .pay-opt.sel{border-color:var(--plum)}
+  .pay-opt .radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center}
+  .pay-opt.sel .radio{border-color:var(--plum)}
+  .pay-opt.sel .radio::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--plum)}
+  .pay-opt .e{font-size:20px}
+  .pay-opt b{font-size:14px;font-weight:600}
+  .pay-opt small{color:var(--muted);font-weight:300;font-size:12px;display:block}
+
+  #screen-success.active{display:grid;place-items:center;min-height:80vh;text-align:center;padding:30px}
+  .succ-ic{width:96px;height:96px;border-radius:50%;background:var(--plum);color:#fff;font-size:52px;display:grid;place-items:center;margin:0 auto 20px;animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+  #screen-success h2{font-size:30px;font-weight:600}
+  #screen-success p{color:var(--muted);font-weight:300;margin:8px 0 4px}
+  #screen-success .oid{background:#faf3f5;padding:8px 16px;border-radius:2px;font-weight:600;display:inline-block;margin:10px 0 22px;letter-spacing:1px}
+  #screen-success button{background:var(--plum);color:#fff;border:none;padding:14px 32px;border-radius:2px;font-weight:500;font-size:15px;letter-spacing:.5px}
+
+  /* ---------- CATEGORIES / ACCOUNT / ORDERS / TRACK ---------- */
+  .subhead.nobk{justify-content:space-between}
+  .subhead.nobk .back{display:none}
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+  .cat-tile{background:#fff;border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
+  .cat-tile .ct-img{aspect-ratio:16/10;background:var(--blush);overflow:hidden}
+  .cat-tile .ct-img img{width:100%;height:100%;object-fit:cover}
+  .cat-tile .ct-info{padding:10px 12px}
+  .cat-tile b{font-family:'Playfair Display';font-size:16px;font-weight:600}
+  .cat-tile small{color:var(--muted);font-weight:400;display:block}
+  .acct{padding:16px}
+  .acct-hero{background:#fff;border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+  .acct-av{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--plum),var(--rose));color:#fff;display:grid;place-items:center;font-family:'Playfair Display';font-size:22px;font-weight:600;flex:0 0 auto}
+  .acct-hero b{font-family:'Playfair Display';font-size:18px;font-weight:600}
+  .acct-hero p{color:var(--muted);font-weight:300;font-size:12.5px;margin-top:2px}
+  .acct-edit{margin-left:auto;background:#f6eef1;color:var(--plum);border:none;font-weight:600;padding:8px 16px;border-radius:2px;align-self:flex-start;font-family:'Poppins'}
+  .acct-stats{display:flex;background:#fff;border-radius:10px;margin-top:12px;box-shadow:var(--shadow);overflow:hidden}
+  .acct-stats>div{flex:1;text-align:center;padding:14px;border-right:1px solid var(--line)}
+  .acct-stats>div:last-child{border:none}
+  .acct-stats b{font-family:'Playfair Display';font-size:22px;font-weight:700;color:var(--plum);display:block}
+  .acct-stats small{color:var(--muted);font-weight:400;font-size:12px}
+  .acct-menu{background:#fff;border-radius:10px;margin-top:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .amenu{display:flex;align-items:center;gap:14px;padding:15px 16px;border-bottom:1px solid var(--line)}
+  .amenu:last-child{border:none}
+  .amenu .ai{font-size:19px;width:24px;text-align:center}
+  .amenu b{font-weight:500;font-size:14.5px;flex:1}
+  .amenu .chev{color:var(--muted);font-size:22px;line-height:1}
+  .amenu.logout b{color:var(--rose)}
+  .acct-foot{text-align:center;color:var(--muted);font-weight:400;font-size:12px;padding:18px}
+  .order-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+  .oc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .oc-id{font-weight:600;font-size:13px}
+  .oc-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px}
+  .oc-status.done{background:#f0f7f2;color:var(--green)}
+  .oc-status.prog{background:#f6eef1;color:var(--plum)}
+  .oc-body{display:flex;gap:12px;align-items:center}
+  .oc-imgs{display:flex;flex:0 0 auto}
+  .oc-imgs .oi{width:50px;height:60px;border-radius:6px;overflow:hidden;border:2px solid #fff;margin-left:-14px;background:var(--blush)}
+  .oc-imgs .oi:first-child{margin-left:0}
+  .oc-imgs .oi img{width:100%;height:100%;object-fit:cover}
+  .oc-items{font-weight:500;font-size:13.5px;color:#3a2f34;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .oc-meta{color:var(--muted);font-weight:400;font-size:12px;margin-top:3px}
+  .oc-total{font-family:'Playfair Display';font-weight:700;font-size:16px;margin-top:2px}
+  .oc-actions{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:center}
+  .oc-actions button{background:none;border:none;color:var(--plum);font-weight:600;font-size:13.5px;font-family:'Poppins'}
+  .track-head{background:#fff;border-radius:10px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+  .track-head .th-id{font-weight:600;font-size:14px}
+  .track-head .th-eta{color:var(--green);font-family:'Playfair Display';font-size:18px;font-weight:600;margin-top:4px}
+  .track-head .th-sub{color:var(--muted);font-weight:400;font-size:12.5px;margin-top:2px}
+  .stepper{background:#fff;border-radius:10px;padding:16px 16px 2px;box-shadow:var(--shadow);margin-bottom:12px}
+  .step{display:flex;gap:14px;position:relative}
+  .step .dot{width:26px;height:26px;border-radius:50%;background:#e5d7dc;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;z-index:2;flex:0 0 auto}
+  .step.done .dot{background:var(--green)}
+  .step:not(:last-child)::before{content:"";position:absolute;left:12px;top:24px;height:100%;width:2px;background:#e5d7dc}
+  .step.done:not(:last-child)::before{background:var(--green)}
+  .step-info{padding:2px 0 20px}
+  .step-info b{font-size:14px;font-weight:600;color:var(--muted)}
+  .step.done .step-info b{color:var(--ink)}
+  .step.current .step-info b{color:var(--plum)}
+  .step-info small{color:var(--muted);font-weight:400;display:block;font-size:12.5px}
+  .track-items{background:#fff;border-radius:10px;padding:4px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+  .track-items .ti{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+  .track-items .ti:last-child{border:none}
+  .track-items .ti-img{width:48px;height:58px;border-radius:6px;overflow:hidden;background:var(--blush);flex:0 0 auto}
+  .track-items .ti-img img{width:100%;height:100%;object-fit:cover}
+  .track-items .ti b{font-size:13.5px;font-weight:600}
+  .track-items .ti small{color:var(--muted);font-weight:400;font-size:12px;display:block}
+  @media(min-width:768px){.cat-grid{grid-template-columns:repeat(4,1fr);padding:20px}}
+  @media(min-width:900px){#ordersContent,#trackContent,.acct{max-width:820px;margin-left:auto;margin-right:auto}}
+  #bottomNav{position:fixed;bottom:0;left:0;right:0;z-index:55;background:#fff;box-shadow:0 -3px 14px rgba(0,0,0,.08);display:flex;max-width:1280px;margin:0 auto}
+  #bottomNav button{flex:1;border:none;background:none;padding:9px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:500;color:var(--muted)}
+  #bottomNav button.on{color:var(--plum)}
+  #bottomNav .bn-ic{font-size:19px;position:relative}
+  #bottomNav .bn-ic .badge{position:absolute;top:-5px;right:-9px;background:var(--gold);color:#3a2e12;font-size:9px;font-weight:700;min-width:15px;height:15px;border-radius:999px;display:grid;place-items:center;padding:0 3px}
+
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--plum-deep);color:#fff;font-weight:400;letter-spacing:.4px;padding:14px 24px;border-radius:4px;z-index:90;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:.35s;font-size:14px}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* ================= DESKTOP ================= */
+  @media(min-width:768px){
+    .grid{grid-template-columns:repeat(4,1fr);gap:16px;padding:16px}
+    .card{box-shadow:var(--shadow)}
+    .rel-card{flex-basis:190px}
+  }
+  @media(min-width:900px){
+    #appHeader.hidden{display:block}
+    #appHeader .hbar{padding:16px 24px}
+    .searchwrap{position:absolute;top:14px;left:250px;right:240px;padding:0}
+    .searchbar{padding:12px 16px}
+    .h-icons{gap:12px}
+    .h-ic{width:auto;height:auto;background:none;flex-direction:column;font-size:19px;padding:2px 8px}
+    .h-ic-label{display:block;font-size:11px;font-weight:400;color:var(--muted)}
+    #bottomNav{display:none!important}
+    .banner-mobile{display:none}
+    .banner-desktop{display:grid}
+    .subhead{display:none}
+    .screen{padding-bottom:30px}
+    .pd{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;padding:22px;align-items:start}
+    .pd-media{position:sticky;top:150px;border-radius:8px;box-shadow:var(--shadow);overflow:hidden}
+    .pd-info{margin-top:0;border-radius:8px;box-shadow:var(--shadow)}
+    .related{grid-column:1/-1;padding:0 8px}
+    .actionbar{position:sticky;bottom:0;border-radius:8px;max-width:none;margin:16px 22px;box-shadow:var(--shadow)}
+    .checkout-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:22px;align-items:start}
+    .checkout-grid .col-right{position:sticky;top:150px}
+  }
+  @media(min-width:1100px){ .grid{grid-template-columns:repeat(5,1fr)} }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ HEADER ============ -->
+  <header id="appHeader">
+    <div class="hbar">
+      <a class="logo" onclick="go('screen-home')">Saliya<small>Woman</small></a>
+      <nav class="desk-menu">
+        <a onclick="filterTo('Dress')">Clothing</a>
+        <a onclick="filterTo('Cosmetics')">Cosmetics</a>
+        <a onclick="filterTo('Footwear')">Footwear</a>
+        <a onclick="filterTo('Accessories')">Accessories</a>
+      </nav>
+      <div class="h-icons">
+        <button class="h-ic" onclick="go('screen-account')" title="Account">👤<span class="h-ic-label">Account</span></button>
+        <button class="h-ic" title="Wishlist">♡<span class="h-ic-label">Wishlist</span></button>
+        <button class="h-ic" onclick="go('screen-cart')" title="Bag">🛍️<span class="badge" id="hcCart">0</span><span class="h-ic-label">Bag</span></button>
+      </div>
+    </div>
+    <div class="searchwrap">
+      <div class="searchbar" onclick="document.getElementById('sInput').focus()">
+        <span class="s-ic">🔍</span>
+        <input id="sInput" placeholder="Search dresses, lipsticks, heels…" oninput="searchProducts(this.value)">
+        <span class="s-right">📷 🎤</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HOME ============ -->
+  <main id="screen-home" class="screen active">
+    <div class="cat-strip" id="catStrip"></div>
+
+    <div class="banner-mobile" id="bannerMobile"></div>
+
+    <div class="banner-desktop">
+      <div>
+        <div class="eyebrow">The Festive Edit · 2026</div>
+        <h1>Grace in Every<br><i>Detail</i>.</h1>
+        <p>Curated clothing, cosmetics and footwear for the modern woman — where timeless elegance meets everyday ease.</p>
+        <button class="cta" onclick="filterTo('All')">Shop the Collection</button>
+      </div>
+      <div class="bd-art"><div class="bd-img" id="heroImg"></div></div>
+    </div>
+
+    <div class="sec-title"><h2>Bestselling Styles</h2><span id="resCount"></span></div>
+    <div class="toolbar" id="toolbar">
+      <button class="chip tool" onclick="cycleSort()">↕ <span id="sortLabel">Sort</span></button>
+      <button class="chip active" data-f="All" onclick="filterTo('All')">All</button>
+      <button class="chip" data-f="Dress" onclick="filterTo('Dress')">Clothing</button>
+      <button class="chip" data-f="Cosmetics" onclick="filterTo('Cosmetics')">Cosmetics</button>
+      <button class="chip" data-f="Footwear" onclick="filterTo('Footwear')">Footwear</button>
+      <button class="chip" data-f="Accessories" onclick="filterTo('Accessories')">Accessories</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- ============ PRODUCT DETAIL ============ -->
+  <main id="screen-product" class="screen">
+    <div class="subhead">
+      <button class="back" onclick="goBack()">←</button>
+      <h2>Product Details</h2>
+      <button class="sh-ic">🔗</button>
+      <button class="sh-ic" onclick="go('screen-cart')">🛍️<span class="badge" id="pdCart">0</span></button>
+    </div>
+    <div class="pd">
+      <div class="pd-media">
+        <div class="pd-main" id="pdMain"></div>
+        <div class="pd-thumbs" id="pdThumbs"></div>
+      </div>
+      <div class="pd-info" id="pdInfo"></div>
+      <div class="related">
+        <div class="sec-title"><h2>You may also like</h2></div>
+        <div class="rel-scroll" id="relScroll"></div>
+      </div>
+    </div>
+    <div class="actionbar" id="pdBar">
+      <button class="ab-cart" id="pdAddBtn">Add to Bag</button>
+      <button class="ab-buy" id="pdBuyBtn">Buy Now</button>
+    </div>
+  </main>
+
+  <!-- ============ CART ============ -->
+  <main id="screen-cart" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Shopping Bag</h2></div>
+    <div id="cartContent"></div>
+  </main>
+
+  <!-- ============ CHECKOUT ============ -->
+  <main id="screen-checkout" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Checkout</h2></div>
+    <div id="checkoutContent"></div>
+  </main>
+
+  <!-- ============ SUCCESS ============ -->
+  <main id="screen-success" class="screen">
+    <div>
+      <div class="succ-ic">✓</div>
+      <h2>Order Confirmed</h2>
+      <p>Thank you for shopping with Saliya.</p>
+      <div class="oid" id="orderId">#SL-000000</div>
+      <p style="font-size:13px">Your order is being prepared with care ✨</p>
+      <br><button onclick="go('screen-home')">Continue Shopping</button>
+    </div>
+  </main>
+
+  <!-- ============ CATEGORIES ============ -->
+  <main id="screen-categories" class="screen">
+    <div class="subhead nobk"><h2>All Categories</h2><button class="sh-ic" onclick="go('screen-cart')">🛍️<span class="badge" id="catCart">0</span></button></div>
+    <div class="cat-grid" id="catGrid"></div>
+  </main>
+
+  <!-- ============ ACCOUNT ============ -->
+  <main id="screen-account" class="screen">
+    <div class="subhead nobk"><h2>My Account</h2></div>
+    <div class="acct">
+      <div class="acct-hero">
+        <div class="acct-av">AM</div>
+        <div><b>Ananya Menon</b><p>ananya.menon@email.com<br>+91 98765 43210</p></div>
+        <button class="acct-edit">Edit</button>
+      </div>
+      <div class="acct-stats">
+        <div onclick="go('screen-orders')"><b id="accOrders">0</b><small>Orders</small></div>
+        <div><b>18</b><small>Wishlist</small></div>
+        <div><b>4</b><small>Coupons</small></div>
+      </div>
+      <div class="acct-menu">
+        <div class="amenu" onclick="go('screen-orders')"><span class="ai">📦</span><b>My Orders</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="go('screen-orders')"><span class="ai">🚚</span><b>Track Order</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">📍</span><b>Saved Addresses</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">💳</span><b>Payment Methods</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">♡</span><b>My Wishlist</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">🎟️</span><b>Coupons & Offers</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">❓</span><b>Help & Support</b><span class="chev">›</span></div>
+        <div class="amenu logout" onclick="showToast('Logged out')"><span class="ai">🚪</span><b>Logout</b><span class="chev">›</span></div>
+      </div>
+      <div class="acct-foot">Saliya · Prototype v1.0</div>
+    </div>
+  </main>
+
+  <!-- ============ MY ORDERS ============ -->
+  <main id="screen-orders" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>My Orders</h2></div>
+    <div id="ordersContent"></div>
+  </main>
+
+  <!-- ============ TRACK ORDER ============ -->
+  <main id="screen-track" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Track Order</h2></div>
+    <div id="trackContent"></div>
+  </main>
+
+  <nav id="bottomNav">
+    <button class="on" onclick="go('screen-home')"><span class="bn-ic">🏠</span>Home</button>
+    <button onclick="go('screen-categories')"><span class="bn-ic">🗂️</span>Categories</button>
+    <button onclick="go('screen-cart')"><span class="bn-ic">🛍️<span class="badge" id="bnCart">0</span></span>Bag</button>
+    <button onclick="go('screen-account')"><span class="bn-ic">👤</span>Account</button>
+  </nav>
+
+  <div class="toast" id="toast">Added to your bag ✓</div>
+</div>
+
+<script>
+const CUR='₹';
+const products=[
+  {id:1,name:"Rosewood Floral Maxi",cat:"Dress",price:2299,mrp:3499,q:"woman,dress",lock:12,tag:"Bestseller",gold:false,rating:4.9,r:412,sizes:["XS","S","M","L","XL"],desc:"A flowing georgette maxi with hand-painted florals — effortless from brunch to evening soirées.",details:["Premium georgette fabric","Concealed side zip","Fully lined","Dry clean recommended"]},
+  {id:2,name:"Velvet Matte Lipstick Set",cat:"Cosmetics",price:1199,mrp:1899,q:"lipstick,makeup",lock:22,tag:"New",gold:true,rating:4.8,r:286,sizes:[],variant:"Set of 6 shades",desc:"Six long-wear matte shades in a luxe velvet finish. Cruelty-free and enriched with shea butter.",details:["Long-wear matte finish","Enriched with shea butter","Cruelty-free & vegan","Set of 6 nude–bold shades"]},
+  {id:3,name:"Aurelia Block Heels",cat:"Footwear",price:1899,mrp:2799,q:"heels,shoes",lock:32,tag:"Trending",gold:false,rating:4.7,r:158,sizes:["5","6","7","8"],desc:"Comfortable 3-inch block heels in blush suede with a cushioned footbed for all-day poise.",details:["3-inch block heel","Cushioned memory footbed","Anti-slip sole","Faux suede upper"]},
+  {id:4,name:"Handwoven Silk Saree",cat:"Dress",price:4599,mrp:6999,q:"saree,silk",lock:42,tag:"Festive",gold:true,rating:5.0,r:203,sizes:["Free Size"],desc:"Pure Kanjivaram silk with a gold zari border — a timeless heirloom for every celebration.",details:["Pure Kanjivaram silk","Gold zari border","Includes blouse piece","Length: 6.3 m"]},
+  {id:5,name:"Radiance Vitamin-C Serum",cat:"Cosmetics",price:899,mrp:1299,q:"skincare,serum",lock:52,tag:"Skincare",gold:false,rating:4.8,r:521,sizes:[],variant:"30 ml",desc:"A brightening serum with 10% Vitamin-C for a visibly luminous, even-toned glow.",details:["10% Vitamin-C","Brightens & evens tone","Lightweight, fast-absorbing","Dermatologically tested"]},
+  {id:6,name:"Saffron Embroidered Kurti",cat:"Dress",price:1299,mrp:1999,q:"kurti,ethnic",lock:62,tag:"Ethnic",gold:false,rating:4.7,r:176,sizes:["S","M","L","XL"],desc:"Cotton-silk kurti with delicate thread embroidery — breathable elegance for daily wear.",details:["Cotton-silk blend","Hand-thread embroidery","Straight fit","Machine washable"]},
+  {id:7,name:"Gilded Tote Handbag",cat:"Accessories",price:2499,mrp:3799,q:"handbag,fashion",lock:72,tag:"Luxe",gold:true,rating:4.9,r:134,sizes:[],variant:"One Size",desc:"Structured vegan-leather tote with gold hardware — roomy, refined and endlessly versatile.",details:["Premium vegan leather","Gold-tone hardware","Fits a 14\" laptop","Detachable pouch inside"]},
+  {id:8,name:"Strappy Rose Wedges",cat:"Footwear",price:1599,mrp:2399,q:"wedges,sandals",lock:82,tag:"Comfort",gold:false,rating:4.6,r:92,sizes:["5","6","7","8"],desc:"Espadrille wedges with satin straps — height without the ache, styled for summer.",details:["3.5-inch espadrille wedge","Satin ankle straps","Padded insole","Jute-wrapped heel"]},
+  {id:9,name:"Pearl Drop Earrings",cat:"Accessories",price:799,mrp:1299,q:"earrings,jewellery",lock:92,tag:"Jewellery",gold:true,rating:4.9,r:245,sizes:[],variant:"One Size",desc:"Freshwater pearl drops set in gold-plated brass — understated sparkle for any occasion.",details:["Freshwater pearls","18k gold-plated brass","Hypoallergenic posts","Comes in a gift box"]},
+  {id:10,name:"Midnight Wrap Dress",cat:"Dress",price:1999,mrp:2999,q:"woman,fashion",lock:102,tag:"Party",gold:false,rating:4.8,r:167,sizes:["XS","S","M","L"],desc:"A figure-flattering wrap dress in deep plum crepe — your new evening essential.",details:["Stretch crepe fabric","True wrap silhouette","Midi length","Fully lined bodice"]},
+  {id:11,name:"Rosé Blush Palette",cat:"Cosmetics",price:1099,mrp:1699,q:"makeup,blush",lock:112,tag:"New",gold:false,rating:4.7,r:189,sizes:[],variant:"4 shades",desc:"Four buildable blush and highlight shades for a naturally lit-from-within flush.",details:["4 buildable shades","Blush + highlight duo","Silky micro-fine powder","Mirror compact"]},
+  {id:12,name:"Classic Pointed Flats",cat:"Footwear",price:1399,mrp:2099,q:"flats,shoes",lock:122,tag:"Everyday",gold:false,rating:4.8,r:211,sizes:["5","6","7","8"],desc:"Soft leather pointed flats that pair with everything — office to weekend, effortlessly.",details:["Genuine soft leather","Pointed-toe silhouette","Flexible non-slip sole","Cushioned lining"]},
+];
+const REVIEWS=[
+  {n:5,name:"Ananya D.",t:"Absolutely elegant",p:"The fabric drapes beautifully and the colour is rich. Felt premium the moment I opened it."},
+  {n:4,name:"Kavya M.",t:"Lovely find",p:"Fits true to size and looks exactly like the pictures. Delivery was on time."},
+  {n:5,name:"Ritika S.",t:"Worth every rupee ✨",p:"Got compliments all evening. The finish is gorgeous and it feels so comfortable."},
+];
+
+let cart={}, currentFilter="All", searchQ="", sortMode=0, currentPD=null, selSize=null, navStack=[], currentScreen="screen-home";
+const SORTS=["Sort","Price: Low→High","Price: High→Low","Top Rated"];
+const $ = id => document.getElementById(id);
+const disc = p => Math.round((p.mrp-p.price)/p.mrp*100);
+const money = n => CUR + n.toLocaleString('en-IN');
+const catLabel = c => c==='Dress'?'Clothing':c;
+const pic = (p,i=0) => `https://loremflickr.com/600/800/${p.q}?lock=${p.lock+i}`;
+const imgTag = (src,seed) => `<img src="${src}" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${seed}/600/800'">`;
+
+const CATS=[
+  {q:"woman,fashion",n:"Clothing",f:"Dress",l:12},{q:"makeup",n:"Cosmetics",f:"Cosmetics",l:22},{q:"heels,shoes",n:"Footwear",f:"Footwear",l:32},
+  {q:"handbag",n:"Bags",f:"Accessories",l:72},{q:"saree",n:"Sarees",f:"Dress",l:42},{q:"jewellery",n:"Jewellery",f:"Accessories",l:92},
+  {q:"skincare",n:"Skincare",f:"Cosmetics",l:52},{q:"perfume",n:"Beauty",f:"Cosmetics",l:300}
+];
+$('catStrip').innerHTML = CATS.map(c=>`<button class="cat-i" onclick="filterTo('${c.f}')">
+  <div class="circ">${imgTag(`https://loremflickr.com/160/160/${c.q}?lock=${c.l}`,'cat'+c.l)}</div><b>${c.n}</b></button>`).join('');
+
+$('bannerMobile').innerHTML=`
+  <div class="bm-card b1"><small>The Festive Edit</small><b>Draped in Grace</b><button class="go" onclick="filterTo('Dress')">Shop Now</button><div class="bm-img">${imgTag('https://loremflickr.com/200/200/saree,silk?lock=42','smb1')}</div></div>
+  <div class="bm-card b2"><small>Beauty Bar</small><b>Glow Up 40% Off</b><button class="go" onclick="filterTo('Cosmetics')">Explore</button><div class="bm-img">${imgTag('https://loremflickr.com/200/200/makeup,lipstick?lock=22','smb2')}</div></div>
+  <div class="bm-card b3"><small>Step Out</small><b>Heels & Flats</b><button class="go" onclick="filterTo('Footwear')">View All</button><div class="bm-img">${imgTag('https://loremflickr.com/200/200/heels,shoes?lock=32','smb3')}</div></div>`;
+$('heroImg').innerHTML=imgTag('https://loremflickr.com/600/800/woman,fashion?lock=600','herosl');
+
+function visibleProducts(){
+  let list=products.filter(p=>(currentFilter==="All"||p.cat===currentFilter)&&(searchQ===""||p.name.toLowerCase().includes(searchQ)||catLabel(p.cat).toLowerCase().includes(searchQ)));
+  if(sortMode===1)list=[...list].sort((a,b)=>a.price-b.price);
+  if(sortMode===2)list=[...list].sort((a,b)=>b.price-a.price);
+  if(sortMode===3)list=[...list].sort((a,b)=>b.rating-a.rating);
+  return list;
+}
+function cardHTML(p){return `<div class="card" onclick="openProduct(${p.id})">
+  <div class="thumb">
+    <span class="tag ${p.gold?'gold':''}">${p.tag}</span>
+    <button class="wish" onclick="event.stopPropagation();this.classList.toggle('on');this.textContent=this.classList.contains('on')?'♥':'♡'">♡</button>
+    ${imgTag(pic(p),'p'+p.id)}
+  </div>
+  <div class="c-info">
+    <div class="cname">${p.name}</div>
+    <div class="c-price"><span class="now">${money(p.price)}</span><span class="was">${money(p.mrp)}</span><span class="off">${disc(p)}% off</span></div>
+    <span class="c-deliv">Free Delivery</span>
+    <div class="c-rate"><span class="rpill">★ ${p.rating}</span><small>${(p.r/1000).toFixed(1)}k</small></div>
+  </div></div>`;}
+function renderGrid(){
+  const list=visibleProducts();
+  $('grid').innerHTML=list.length?list.map(cardHTML).join(''):`<div style="grid-column:1/-1" class="empty"><span class="e">🔎</span>No products found</div>`;
+  $('resCount').textContent=list.length+" items";
+}
+function filterTo(f){currentFilter=f;searchQ="";$('sInput').value="";
+  document.querySelectorAll('.chip[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===f));
+  renderGrid();go('screen-home');$('toolbar')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function searchProducts(q){searchQ=q.toLowerCase().trim();renderGrid();}
+function cycleSort(){sortMode=(sortMode+1)%4;$('sortLabel').textContent=SORTS[sortMode];renderGrid();}
+
+function openProduct(id){
+  const p=products.find(x=>x.id===id);currentPD=p;selSize=p.sizes.length?null:"NA";
+  const gallery=[0,1,2,3].map(i=>pic(p,i));
+  $('pdMain').innerHTML=`${imgTag(gallery[0],'pd'+p.id)}<div class="dots"><i class="on"></i><i></i><i></i></div>`;
+  $('pdMain').querySelector('img').id='pdMainImg';
+  $('pdThumbs').innerHTML=gallery.map((g,i)=>`<button class="${i===0?'sel':''}" onclick="selThumb(this,${i},'${g}')">${imgTag(g,'pdt'+p.id+'-'+i)}</button>`).join('');
+  const sizeBlock=p.sizes.length?`<div class="blockt">Select Size</div><div class="sizes" id="pdSizes">${p.sizes.map(s=>`<button onclick="pickSize(this,'${s}')">${s}</button>`).join('')}</div>`
+    :`<div class="blockt">Variant</div><div class="c-deliv" style="font-size:13px">${p.variant||'One Size'}</div>`;
+  $('pdInfo').innerHTML=`
+    <div class="pd-price"><span class="now">${money(p.price)}</span><span class="was">${money(p.mrp)}</span><span class="off">${disc(p)}% off</span></div>
+    <div class="pd-tax">inclusive of all taxes</div>
+    <div class="pd-name">${p.name}</div>
+    <div class="pd-rate"><span class="rpill">★ ${p.rating}</span><small>${p.r} ratings · ${Math.round(p.r*0.4)} reviews</small></div>
+    <div class="blockt">Colour</div>
+    <div class="swatch"><span class="sel" style="background:#6d3b52"></span><span style="background:#c9788f"></span><span style="background:#c8a04b"></span><span style="background:#2a2129"></span></div>
+    ${sizeBlock}
+    <div style="margin-top:16px">
+      <div class="inforow"><span class="e">🚚</span><div><b>Free Delivery</b><small>Delivered in 3–6 days</small></div></div>
+      <div class="inforow"><span class="e">↩️</span><div><b>15-Day Easy Returns</b><small>Hassle-free returns</small></div></div>
+      <div class="inforow"><span class="e">✨</span><div><b>100% Authentic</b><small>Genuine brands guaranteed</small></div></div>
+    </div>
+    <div class="blockt">Product Details</div>
+    <p style="color:#5c4f55;font-weight:300;font-size:14px;margin-bottom:10px">${p.desc}</p>
+    <ul class="details-list">${p.details.map(d=>`<li>${d}</li>`).join('')}</ul>
+    <div class="blockt">Ratings & Reviews</div>
+    <div class="rev-summary">
+      <div class="rev-big"><b>${p.rating}</b><div class="stars">★★★★★</div><small>${p.r} ratings</small></div>
+      <div class="rev-bars">${[5,4,3,2,1].map((s,i)=>`<div class="bar">${s}★<div class="track"><div class="fill" style="width:${[84,70,38,12,5][i]}%"></div></div></div>`).join('')}</div>
+    </div>
+    ${REVIEWS.map(rv=>`<div class="review"><div class="rev-top"><span class="rpill">★ ${rv.n}</span><b>${rv.t}</b></div><p>${rv.p}</p><div class="who">${rv.name} · Verified Buyer</div></div>`).join('')}`;
+  const rel=[...products.filter(x=>x.cat===p.cat&&x.id!==id),...products.filter(x=>x.cat!==p.cat)].slice(0,8);
+  $('relScroll').innerHTML=rel.map(rp=>`<div class="rel-card" onclick="openProduct(${rp.id})">
+    <div class="rt">${imgTag(pic(rp),'r'+rp.id)}</div>
+    <div class="ri"><div class="rn">${rp.name}</div><div class="rp">${money(rp.price)}<s>${money(rp.mrp)}</s></div>
+    <div class="c-rate" style="margin-top:5px"><span class="rpill">★ ${rp.rating}</span></div></div></div>`).join('');
+  $('pdAddBtn').onclick=()=>{if(needSize())return;addToCart(p.id,1,selSize);};
+  $('pdBuyBtn').onclick=()=>{if(needSize())return;addToCart(p.id,1,selSize,true);go('screen-cart');};
+  go('screen-product');
+}
+function selThumb(el,i,src){document.querySelectorAll('.pd-thumbs button').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');
+  $('pdMainImg').src=src;document.querySelectorAll('.pd-main .dots i').forEach((d,di)=>d.classList.toggle('on',di===Math.min(i,2)));}
+function pickSize(el,s){document.querySelectorAll('#pdSizes button').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');selSize=s;}
+function needSize(){if(currentPD.sizes.length&&!selSize){showToast('Please select a size');return true;}return false;}
+
+function addToCart(id,qty=1,size=null,silent=false){
+  if(cart[id])cart[id].qty+=qty;else cart[id]={qty,size:size||(products.find(p=>p.id===id).sizes[0]||(products.find(p=>p.id===id).variant||'One Size'))};
+  updateBadges();if(!silent)showToast('Added to your bag ✓');renderCart();
+}
+function changeQty(id,d){if(!cart[id])return;cart[id].qty+=d;if(cart[id].qty<=0)delete cart[id];updateBadges();renderCart();}
+function cartTotals(){let mrp=0,now=0,count=0;Object.keys(cart).forEach(id=>{const p=products.find(x=>x.id==id);const q=cart[id].qty;mrp+=p.mrp*q;now+=p.price*q;count+=q;});return{mrp,now,count,save:mrp-now};}
+function updateBadges(){const c=cartTotals().count;['hcCart','pdCart','bnCart','catCart'].forEach(x=>{const e=$(x);if(e)e.textContent=c;});}
+function renderCart(){
+  const ids=Object.keys(cart);const t=cartTotals();
+  if(!ids.length){$('cartContent').innerHTML=`<div class="empty"><span class="e">🛍️</span>Your bag is empty.<br>Discover something beautiful.<br><button onclick="go('screen-home')">Start Shopping</button></div>`;return;}
+  $('cartContent').innerHTML=`<div class="pad">
+    ${ids.map(id=>{const p=products.find(x=>x.id==id);const it=cart[id];return `
+      <div class="cart-item">
+        <div class="ci-img">${imgTag(pic(p),'c'+p.id)}</div>
+        <div><div class="cn">${p.name}</div><div class="cmeta">${p.sizes.length?'Size: '+it.size:it.size} · ${catLabel(p.cat)}</div>
+          <div class="cp">${money(p.price)}<s>${money(p.mrp)}</s> <span style="color:var(--green);font-weight:600;font-size:12px">${disc(p)}% off</span></div>
+          <div class="qty"><button onclick="changeQty(${id},-1)">−</button><span>${it.qty}</span><button onclick="changeQty(${id},1)">+</button></div>
+        </div>
+        <button class="rm" onclick="changeQty(${id},-${it.qty})">🗑️</button>
+      </div>`}).join('')}
+    <div class="price-card">
+      <h4>Price Details (${t.count} item${t.count>1?'s':''})</h4>
+      <div class="price-line"><span>Total MRP</span><span>${money(t.mrp)}</span></div>
+      <div class="price-line"><span>Discount</span><span style="color:var(--green);font-weight:600">− ${money(t.save)}</span></div>
+      <div class="price-line"><span>Delivery Fee</span><span class="free">FREE</span></div>
+      <div class="price-line tot"><span>Total Amount</span><span>${money(t.now)}</span></div>
+    </div>
+    <div class="save-note">You'll save ${money(t.save)} on this order ✨</div>
+  </div>
+  <div class="actionbar"><button class="ab-single" onclick="startCheckout()">Place Order · ${money(t.now)}</button></div>`;
+}
+
+let payMethod='upi';
+function startCheckout(){renderCheckout();go('screen-checkout');}
+function renderCheckout(){
+  const t=cartTotals();const ids=Object.keys(cart);
+  $('checkoutContent').innerHTML=`<div class="pad checkout-grid">
+    <div class="col-left">
+      <div class="blockt" style="margin-top:0">Delivery Address</div>
+      <div class="addr-card"><span class="home-ic">🏠</span>
+        <div><b>Ananya Menon<span class="tagd">Home</span></b><p>12, Rose Villa, Panampilly Nagar,<br>Kochi, Kerala – 682036 · +91 98765 43210</p></div>
+        <button class="change">Change</button></div>
+      <div class="blockt">Order Summary (${t.count})</div>
+      ${ids.map(id=>{const p=products.find(x=>x.id==id);const it=cart[id];return `
+        <div class="cart-item" style="grid-template-columns:60px 1fr">
+          <div class="ci-img" style="width:60px;height:74px">${imgTag(pic(p),'c'+p.id)}</div>
+          <div><div class="cn">${p.name}</div><div class="cmeta">${p.sizes.length?'Size: '+it.size:it.size} · Qty: ${it.qty}</div><div class="cp">${money(p.price*it.qty)}</div></div>
+        </div>`}).join('')}
+      <div class="blockt">Payment Method</div>
+      <div id="payList">
+        ${payOpt('upi','📱','UPI','Google Pay, PhonePe, Paytm')}
+        ${payOpt('card','💳','Credit / Debit Card','Visa, Mastercard, RuPay')}
+        ${payOpt('cod','💵','Cash on Delivery','Pay when it arrives')}
+      </div>
+    </div>
+    <div class="col-right">
+      <div class="price-card">
+        <h4>Price Details (${t.count} item${t.count>1?'s':''})</h4>
+        <div class="price-line"><span>Total MRP</span><span>${money(t.mrp)}</span></div>
+        <div class="price-line"><span>Discount</span><span style="color:var(--green);font-weight:600">− ${money(t.save)}</span></div>
+        <div class="price-line"><span>Delivery Fee</span><span class="free">FREE</span></div>
+        <div class="price-line tot"><span>Total Amount</span><span>${money(t.now)}</span></div>
+      </div>
+      <div class="save-note">You saved ${money(t.save)} ✨</div>
+    </div>
+  </div>
+  <div class="actionbar"><button class="ab-single" onclick="placeOrder()">Place Order · ${money(t.now)}</button></div>`;
+}
+function payOpt(id,e,b,s){return `<div class="pay-opt ${payMethod===id?'sel':''}" onclick="setPay('${id}')"><span class="radio"></span><span class="e">${e}</span><div><b>${b}</b><small>${s}</small></div></div>`;}
+function setPay(id){payMethod=id;document.querySelectorAll('#payList .pay-opt').forEach(o=>o.classList.remove('sel'));event.currentTarget.classList.add('sel');}
+function placeOrder(){
+  const n=100000+(cartTotals().count*7919+Object.keys(cart).length*131)%899999;
+  const id='SL-'+n;
+  const items=Object.keys(cart).map(pid=>({pid:+pid,qty:cart[pid].qty,size:cart[pid].size}));
+  orders.unshift({id,date:todayStr(),status:1,items,total:cartTotals().now});
+  $('orderId').textContent='#'+id;
+  cart={};updateBadges();go('screen-success');navStack=[];
+}
+
+/* ---------- orders + tracking ---------- */
+const STEPS=[
+  {t:'Order Placed',s:'We received your order'},
+  {t:'Confirmed',s:'Seller confirmed your order'},
+  {t:'Packed',s:'Your item has been packed'},
+  {t:'Shipped',s:'On the way to your city'},
+  {t:'Out for Delivery',s:'Arriving today'},
+  {t:'Delivered',s:'Delivered successfully'},
+];
+let orders=[
+  {id:'SL-482910',date:'26 Jun 2026',status:3,items:[{pid:1,qty:1,size:'M'},{pid:2,qty:1,size:'Set of 6 shades'}],total:3498},
+  {id:'SL-470118',date:'12 Jun 2026',status:5,items:[{pid:9,qty:1,size:'One Size'}],total:799},
+];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function todayStr(){const d=new Date();return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
+function etaStr(){const d=new Date();d.setDate(d.getDate()+5);return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
+function countIn(f){return f==='All'?products.length:products.filter(p=>p.cat===f).length;}
+function renderCategories(){
+  $('catGrid').innerHTML=CATS.map(c=>`<div class="cat-tile" onclick="filterTo('${c.f}')">
+    <div class="ct-img">${imgTag(`https://loremflickr.com/320/200/${c.q}?lock=${c.l}`,'ctile'+c.l)}</div>
+    <div class="ct-info"><b>${c.n}</b><small>${countIn(c.f)} items</small></div></div>`).join('');
+}
+function renderAccount(){$('accOrders').textContent=orders.length;}
+function renderOrders(){
+  if(!orders.length){$('ordersContent').innerHTML=`<div class="empty"><span class="e">📦</span>No orders yet.<br><button onclick="go('screen-home')">Start Shopping</button></div>`;return;}
+  $('ordersContent').innerHTML='<div class="pad">'+orders.map(o=>{
+    const cnt=o.items.reduce((s,i)=>s+i.qty,0);
+    const names=o.items.map(i=>{const p=products.find(x=>x.id===i.pid);return p?p.name:'';}).filter(Boolean).join(', ');
+    const delivered=o.status>=5;
+    return `<div class="order-card" onclick="openTrack('${o.id}')">
+      <div class="oc-top"><span class="oc-id">#${o.id}</span><span class="oc-status ${delivered?'done':'prog'}">${STEPS[o.status].t}</span></div>
+      <div class="oc-body">
+        <div class="oc-imgs">${o.items.slice(0,3).map(i=>{const p=products.find(x=>x.id===i.pid);return `<div class="oi">${imgTag(pic(p),'o'+p.id)}</div>`}).join('')}</div>
+        <div><div class="oc-items">${names}</div><div class="oc-meta">${o.date} · ${cnt} item${cnt>1?'s':''}</div><div class="oc-total">${money(o.total)}</div></div>
+      </div>
+      <div class="oc-actions"><span style="color:var(--muted);font-weight:400;font-size:12.5px">${delivered?'Delivered':'In transit'}</span><button>Track Order →</button></div>
+    </div>`}).join('')+'</div>';
+}
+function openTrack(id){
+  const o=orders.find(x=>x.id===id);if(!o)return;
+  const delivered=o.status>=5;
+  $('trackContent').innerHTML=`<div class="pad">
+    <div class="track-head">
+      <div class="th-id">Order #${o.id}</div>
+      <div class="th-eta">${delivered?'Delivered ✓':'Arriving by '+etaStr()}</div>
+      <div class="th-sub">${o.items.reduce((s,i)=>s+i.qty,0)} item(s) · ${money(o.total)} · Placed ${o.date}</div>
+    </div>
+    <div class="stepper">
+      ${STEPS.map((s,i)=>`<div class="step ${i<=o.status?'done':''} ${i===o.status?'current':''}">
+        <div class="dot">${i<=o.status?'✓':''}</div>
+        <div class="step-info"><b>${s.t}</b><small>${i===o.status&&!delivered?'In progress…':s.s}</small></div></div>`).join('')}
+    </div>
+    <div class="track-items">
+      ${o.items.map(i=>{const p=products.find(x=>x.id===i.pid);return `<div class="ti"><div class="ti-img">${imgTag(pic(p),'ti'+p.id)}</div><div><b>${p.name}</b><small>${i.size} · Qty: ${i.qty}</small></div></div>`}).join('')}
+    </div>
+    <div class="addr-card"><span class="home-ic">🏠</span><div><b>Ananya Menon<span class="tagd">Home</span></b><p>12, Rose Villa, Panampilly Nagar, Kochi, Kerala – 682036</p></div></div>
+  </div>`;
+  go('screen-track');
+}
+
+/* ---------- navigation ---------- */
+const NAV_IDX={'screen-home':0,'screen-categories':1,'screen-cart':2,'screen-account':3};
+function applyChrome(id){
+  $('appHeader').classList.toggle('hidden',id!=='screen-home');
+  const showNav=(id in NAV_IDX)&&id!=='screen-cart';
+  $('bottomNav').classList.toggle('hidden',!showNav);
+  const idx=NAV_IDX[id];
+  document.querySelectorAll('#bottomNav button').forEach((b,i)=>b.classList.toggle('on',i===idx));
+}
+function activate(id){
+  if(id==='screen-cart')renderCart();
+  if(id==='screen-categories')renderCategories();
+  if(id==='screen-account')renderAccount();
+  if(id==='screen-orders')renderOrders();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  applyChrome(id);
+  currentScreen=id;window.scrollTo(0,0);
+}
+function go(id){if(id!==currentScreen&&id!=='screen-home')navStack.push(currentScreen);activate(id);}
+function goBack(){const prev=navStack.pop()||'screen-home';activate(prev);}
+let toastT;function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1600);}
+
+renderGrid();updateBadges();
+</script>
+</body>
+</html>
