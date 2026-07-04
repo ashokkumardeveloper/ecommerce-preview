@@ -38,7 +38,7 @@
   .demo .enter{margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;
     font-weight:600;font-size:13px;padding:9px 18px;border-radius:999px;align-self:flex-start;transition:.25s}
   .demo:hover .enter{gap:13px}
-  .admins{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:14px}
+  .admins{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;margin-top:14px}
   .admin{display:flex;align-items:center;gap:16px;background:#171933;border:1px solid rgba(255,255,255,.08);
     border-radius:16px;padding:20px 22px;text-decoration:none;color:inherit;transition:.25s}
   .admin:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.2);background:#1c1f3c}
@@ -46,6 +46,7 @@
   .admin.a-baby .ai{background:linear-gradient(150deg,#1ba3d6,#4cc4f0)}
   .admin.a-kiddies .ai{background:linear-gradient(150deg,#7c3aed,#f97316)}
   .admin.a-saliya .ai{background:linear-gradient(150deg,#6d3b52,#c8a04b)}
+  .admin.a-knm .ai{background:linear-gradient(150deg,#1e9bd7,#16a34a)}
   .admin b{font-size:16px;font-weight:600;display:block}
   .admin small{color:#9aa0cf;font-weight:300;font-size:12.5px}
   .admin .go{margin-left:auto;color:#7076ab;font-size:20px}
@@ -114,6 +115,11 @@
       <a class="admin a-saliya" href="saliya/admin/index.html">
         <div class="ai">💄</div>
         <div><b>Saliya Admin</b><small>Dashboard · Products · Orders · Stock</small></div>
+        <span class="go">→</span>
+      </a>
+      <a class="admin a-knm" href="knm/admin/index.html">
+        <div class="ai">✚</div>
+        <div><b>KNM Medicine Admin</b><small>Products · Orders · Prescriptions · Packages · Bookings · Stock</small></div>
         <span class="go">→</span>
       </a>
     </div>

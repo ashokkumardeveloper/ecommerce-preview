@@ -24,6 +24,7 @@
   .hidden{display:none!important}
   .app{max-width:1240px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative}
   .thumb img,.ci-img img,.rt img,.od-img img,.sub-img img{width:100%;height:100%;object-fit:cover}
+  .medimg{width:100%;height:100%;display:grid;place-items:center;line-height:1}
 
   /* header */
   #appHeader{position:sticky;top:0;z-index:50;background:var(--blue);color:#fff}
@@ -271,6 +272,43 @@
   #bottomNav .bn-ic{font-size:20px;position:relative}
   #bottomNav .bn-ic .badge{position:absolute;top:-5px;right:-9px;background:var(--blue);color:#fff;font-size:9px;font-weight:800;min-width:15px;height:15px;border-radius:999px;display:grid;place-items:center;padding:0 3px}
 
+  /* packages & lab reports */
+  .pkg-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .pkg-top{display:flex;gap:12px;align-items:flex-start}
+  .pkg-ic{width:46px;height:46px;border-radius:12px;background:var(--blue-l);display:grid;place-items:center;font-size:24px;flex:0 0 auto}
+  .pkg-name{font-weight:800;font-size:14.5px;line-height:1.25}
+  .pkg-meta{color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
+  .pkg-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .pkg-tags span{background:var(--blue-l);color:var(--blue-d);font-weight:700;font-size:10.5px;padding:3px 8px;border-radius:6px}
+  .pkg-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+  .pkg-price b{font-size:18px;font-weight:800} .pkg-price s{color:var(--muted);font-weight:600;font-size:12px;text-decoration:line-through;margin-left:5px}
+  .pkg-book{border:none;background:var(--blue);color:#fff;font-weight:800;font-size:13px;padding:9px 18px;border-radius:10px}
+  .pkg-rail{display:flex;gap:12px;overflow-x:auto;padding:4px 14px 10px;scrollbar-width:none} .pkg-rail::-webkit-scrollbar{display:none}
+  .pkg-rc{flex:0 0 220px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .pkg-rc .pn{font-weight:800;font-size:13px;line-height:1.25;min-height:2.4em} .pkg-rc .pm{color:var(--muted);font-size:11.5px;font-weight:600;margin-top:2px}
+  .pkg-rc .pp{font-weight:800;margin-top:8px} .pkg-rc .pp s{color:var(--muted);font-weight:600;font-size:11px;text-decoration:line-through;margin-left:4px}
+  .pkg-rc .pb{margin-top:8px;width:100%;border:1.5px solid var(--blue);color:var(--blue);background:#fff;font-weight:800;font-size:12.5px;padding:7px;border-radius:9px}
+  .pkg-incl{background:#fff;border:1px solid var(--line);border-radius:14px;padding:2px 14px}
+  .pkg-incl .ii{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px;font-weight:600} .pkg-incl .ii:last-child{border:none}
+  .pkg-incl .ii::before{content:"✓";color:var(--green);font-weight:800}
+  .book-field{margin-bottom:12px} .book-field label{font-weight:800;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px}
+  .book-field input,.book-field select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600}
+  .book-row{display:flex;gap:10px}
+  .report{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px}
+  .rep-head{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;padding:16px}
+  .rep-head b{font-size:17px;font-weight:800} .rep-head p{opacity:.95;font-size:12.5px;font-weight:500;margin-top:2px}
+  .rep-meta{display:flex;flex-wrap:wrap;gap:8px 20px;padding:14px 16px;border-bottom:1px solid var(--line)}
+  .rep-meta div{font-size:12px;font-weight:600;color:var(--muted)} .rep-meta div b{color:var(--ink);display:block;font-weight:800;font-size:13px}
+  .rep-table{padding:4px 16px 8px}
+  .rep-row{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px;align-items:center}
+  .rep-row:last-child{border:none} .rep-row.h{font-weight:800;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.3px}
+  .rep-row .tn{font-weight:700} .rep-row .val{font-weight:800}
+  .rep-flag{font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;text-align:center}
+  .rep-flag.n{background:var(--green-l);color:var(--green)} .rep-flag.h{background:var(--rx-l);color:var(--rx)} .rep-flag.l{background:#fef3c7;color:#b45309}
+  .rep-foot{padding:14px 16px;color:var(--muted);font-size:12px;font-weight:600} .rep-foot b{color:var(--ink)}
+  .paylock{margin:24px 14px;background:#fff;border:1px dashed var(--amber);border-radius:16px;padding:26px 18px;text-align:center}
+  .paylock .pe{font-size:44px} .paylock b{display:block;font-weight:800;margin-top:10px;font-size:17px} .paylock small{color:var(--muted);font-weight:600;font-size:13px;display:block;margin-top:4px}
+
   /* modal */
   .modal{position:fixed;inset:0;z-index:80;background:rgba(18,53,73,.5);display:none;align-items:flex-end;justify-content:center}
   .modal.open{display:flex}
@@ -331,11 +369,14 @@
     <div class="banner-scroll">
       <div class="bn b1"><small>Flat Discount</small><b>Up to 25% OFF</b><span style="font-weight:600;font-size:12px;opacity:.95">on all medicines</span><span class="be">💊</span></div>
       <div class="bn b2"><small>Subscribe</small><b>Extra 10% OFF</b><span style="font-weight:600;font-size:12px;opacity:.95">on monthly refills</span><span class="be">🔁</span></div>
-      <div class="bn b3"><small>Lab Tests</small><b>Home Sample</b><span style="font-weight:600;font-size:12px;opacity:.95">book in seconds</span><span class="be">🧪</span></div>
+      <div class="bn b3" onclick="go('screen-packages')" style="cursor:pointer"><small>Lab Tests</small><b>Home Sample</b><span style="font-weight:600;font-size:12px;opacity:.95">book in seconds</span><span class="be">🧪</span></div>
     </div>
 
     <div class="sec-title"><h2>Your regular medicines</h2><button class="link" onclick="go('screen-subs')">Manage</button></div>
     <div class="reorder" id="reorder"></div>
+
+    <div class="sec-title"><h2>🧪 Lab Tests & Health Packages</h2><button class="link" onclick="go('screen-packages')">View all</button></div>
+    <div class="pkg-rail" id="pkgRail"></div>
 
     <div class="sec-title"><h2>Popular medicines</h2></div>
     <div class="toolbar" id="toolbar">
@@ -437,6 +478,7 @@
         <div class="amenu" onclick="go('screen-orders')"><span class="ai">📦</span><b>My Orders</b><span class="chev">›</span></div>
         <div class="amenu" onclick="go('screen-prescriptions')"><span class="ai">📄</span><b>My Prescriptions</b><span class="chev">›</span></div>
         <div class="amenu" onclick="go('screen-subs')"><span class="ai">🔁</span><b>My Subscriptions</b><span class="chev">›</span></div>
+        <div class="amenu" onclick="go('screen-bookings')"><span class="ai">🧪</span><b>My Lab Bookings</b><span class="chev">›</span></div>
         <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">📍</span><b>Saved Addresses</b><span class="chev">›</span></div>
         <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">💳</span><b>Payment Methods</b><span class="chev">›</span></div>
         <div class="amenu" onclick="showToast('Coming soon')"><span class="ai">🎟️</span><b>Coupons & Offers</b><span class="chev">›</span></div>
@@ -444,6 +486,37 @@
         <div class="amenu logout" onclick="showToast('Logged out')"><span class="ai">🚪</span><b>Logout</b><span class="chev">›</span></div>
       </div>
     </div>
+  </main>
+
+  <!-- PACKAGES LIST -->
+  <main id="screen-packages" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Lab Tests & Packages</h2></div>
+    <div id="pkgListContent"></div>
+  </main>
+
+  <!-- PACKAGE DETAIL -->
+  <main id="screen-package" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Package Details</h2></div>
+    <div id="pkgDetailContent"></div>
+    <div class="actionbar" id="pkgBar"></div>
+  </main>
+
+  <!-- BOOKING FORM -->
+  <main id="screen-booking" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Book Home Collection</h2></div>
+    <div id="bookingContent"></div>
+  </main>
+
+  <!-- MY BOOKINGS -->
+  <main id="screen-bookings" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>My Lab Bookings</h2></div>
+    <div id="bookingsContent"></div>
+  </main>
+
+  <!-- LAB REPORT -->
+  <main id="screen-report" class="screen">
+    <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Lab Report</h2><button class="sh-ic" onclick="downloadReport()">⬇️</button></div>
+    <div id="reportContent"></div>
   </main>
 
   <!-- SUCCESS -->
@@ -507,7 +580,7 @@ const CATS=[
   {i:"💊",n:"Medicines",f:"Medicines",bg:"#e8f4fb"},{i:"🩸",n:"Diabetes",f:"Diabetes Care",bg:"#fdecea"},
   {i:"💊",n:"Vitamins",f:"Vitamins",bg:"#e7f6ee"},{i:"🩺",n:"Devices",f:"Devices",bg:"#eef0fb"},
   {i:"🧴",n:"Personal Care",f:"Personal Care",bg:"#fef4e6"},{i:"🌿",n:"Wellness",f:"Wellness",bg:"#e7f6ee"},
-  {i:"🍼",n:"Baby & Mom",f:"Personal Care",bg:"#fce8f0"},{i:"🧪",n:"Lab Tests",f:"All",bg:"#e8f4fb"}
+  {i:"🍼",n:"Baby & Mom",f:"Personal Care",bg:"#fce8f0"},{i:"🧪",n:"Lab Tests",f:"__pkg__",bg:"#e8f4fb"}
 ];
 
 const ORDER_STEPS=[{t:"Order Confirmed",s:"We received your order"},{t:"Packed",s:"Medicines packed by pharmacist"},{t:"Shipped",s:"On the way to your city"},{t:"Out for Delivery",s:"Arriving today"},{t:"Delivered",s:"Delivered successfully"}];
@@ -538,8 +611,20 @@ const $=id=>document.getElementById(id);
 const M=id=>meds.find(m=>m.id===id);
 const money=n=>CUR+Math.round(n).toLocaleString('en-IN');
 const disc=m=>Math.round((m.mrp-m.price)/m.mrp*100);
-const pic=(m,i,s)=>`https://loremflickr.com/${s||400}/${s||400}/${m.q}?lock=${m.lock+(i||0)}`;
-const imgTag=(m,seed,s)=>`<img src="${pic(m,0,s)}" loading="lazy" alt="" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${seed}/${s||400}/${s||400}'">`;
+function medEmoji(m){const n=(m.name||'').toLowerCase();
+  if(n.includes('thermometer'))return '🌡️';
+  if(n.includes('bp monitor')||n.includes('blood pressure'))return '🩺';
+  if(n.includes('insulin')||n.includes('injection'))return '💉';
+  if(n.includes('syrup'))return '🧴';
+  if(n.includes('sanitizer'))return '🧼';
+  if(n.includes('ors'))return '🧃';
+  if(n.includes('protein')||n.includes('whey'))return '🥤';
+  if(n.includes('diaper'))return '🧷';
+  if(n.includes('fish oil')||n.includes('omega'))return '🐟';
+  if(m.cat==='Devices')return '🩺';
+  return '💊';}
+function catTint(c){return {'Medicines':'#e8f4fb','Diabetes Care':'#fdecea','Vitamins':'#e7f6ee','Devices':'#eef0fb','Personal Care':'#fef4e6','Wellness':'#eafaf1'}[c]||'#e8f4fb';}
+function imgTag(m,seed,s){const sz=s>=500?92:s>=250?50:s>=120?38:26;return `<div class="medimg" style="font-size:${sz}px;background:${catTint(m.cat)}">${medEmoji(m)}</div>`;}
 function isoIn(days){const d=new Date();d.setDate(d.getDate()+days);return d.toISOString().slice(0,10);}
 function fmtDate(iso){const d=new Date(iso+'T00:00:00');return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
 function fmtShort(iso){const d=new Date(iso+'T00:00:00');return {dow:DOW[d.getDay()],dm:d.getDate()+' '+MONTHS[d.getMonth()]};}
@@ -567,7 +652,7 @@ function card(m){const inCart=cart[m.id];return `<div class="card">
     <button class="c-add ${inCart?'added':''}" onclick="quickAdd(${m.id})">${inCart?'✓ Added · '+cart[m.id].qty:'+ Add'}</button>
   </div></div>`;}
 function renderGrid(){const list=visible();$('grid').innerHTML=list.length?list.map(card).join(''):`<div style="grid-column:1/-1" class="empty"><span class="e">🔍</span>No medicines found</div>`;}
-function filterTo(f){currentFilter=f;searchQ='';$('sInput').value='';document.querySelectorAll('.chip[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===f));renderGrid();go('screen-home');$('toolbar')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function filterTo(f){if(f==='__pkg__'){go('screen-packages');return;}currentFilter=f;searchQ='';$('sInput').value='';document.querySelectorAll('.chip[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===f));renderGrid();go('screen-home');$('toolbar')?.scrollIntoView({behavior:'smooth',block:'start'});}
 function searchMeds(q){searchQ=q.toLowerCase().trim();renderGrid();}
 
 /* product detail */
@@ -783,13 +868,14 @@ function closeModal(){$('reModal').classList.remove('open');}
 /* tracking */
 function trackOrder(id){const o=orders.find(x=>x.id===id);if(!o)return;renderTrack('#'+o.id,ORDER_STEPS,o.status,`${o.items.reduce((s,i)=>s+i.qty,0)} item(s) · ${money(o.total)} · ${o.date}`,o.items);}
 function trackRx(id){const o=rxOrders.find(x=>x.id===id);if(!o)return;renderTrack('℞ '+o.id,RX_STEPS,o.status,`Prescription · ${o.file} · ${o.date}`,null);}
-function renderTrack(title,steps,status,sub,items){
-  const delivered=status>=steps.length-1;
+function renderTrack(title,steps,status,sub,items,extra){
+  const done=status>=steps.length-1;
   $('trackContent').innerHTML=`<div class="pad">
     <div class="track-head"><div style="font-weight:800;font-size:14px">${title}</div>
-      <div class="th-eta">${delivered?'Delivered ✓':status>=steps.length-2?'Arriving today':'Est. delivery '+fmtDate(isoIn(2))}</div>
+      <div class="th-eta">${done?'✓ '+steps[steps.length-1].t:status>=steps.length-2?'Arriving soon':'Est. '+fmtDate(isoIn(2))}</div>
       <div class="th-sub">${sub}</div></div>
-    <div class="stepper">${steps.map((s,i)=>`<div class="step ${i<=status?'done':''} ${i===status?'current':''} ${i===steps.length-1?'last':''}"><div class="dot">${i<=status?'✓':''}</div><div class="step-info"><b>${s.t}</b><small>${i===status&&!delivered?'In progress…':s.s}</small></div></div>`).join('')}</div>
+    <div class="stepper">${steps.map((s,i)=>`<div class="step ${i<=status?'done':''} ${i===status?'current':''} ${i===steps.length-1?'last':''}"><div class="dot">${i<=status?'✓':''}</div><div class="step-info"><b>${s.t}</b><small>${i===status&&!done?'In progress…':s.s}</small></div></div>`).join('')}</div>
+    ${extra||''}
     ${items?`<div class="price-card"><h4>Items</h4>${items.map(i=>{const m=M(i.pid);return `<div class="cart-item" style="border:none;border-bottom:1px solid var(--line);border-radius:0;margin:0;padding:10px 0;grid-template-columns:44px 1fr auto"><div class="ci-img" style="width:44px;height:44px">${imgTag(m,'t'+m.id,80)}</div><div><div class="cn">${m.name}</div><div class="cmeta">Qty: ${i.qty}</div></div><div style="font-weight:800">${money(m.price*i.qty)}</div></div>`}).join('')}</div>`:''}
     <div class="addr-card" style="margin-top:12px"><span style="font-size:20px">🏠</span><div><b>Aarav Sharma<span class="tagd">Home</span></b><p>24, Lake View Residency, MG Road, Kochi, Kerala – 682016</p></div></div>
   </div>`;
@@ -798,6 +884,86 @@ function renderTrack(title,steps,status,sub,items){
 
 /* account */
 function renderAccount(){$('accOrders').textContent=orders.length;$('accRx').textContent=rxOrders.length;$('accSubs').textContent=subs.length;}
+
+/* ---------- lab packages & bookings ---------- */
+const PACKAGES=[
+  {id:1,name:"Full Body Checkup — Basic",tests:45,price:999,mrp:2400,fasting:true,report:"Same day",cat:"Full Body",icon:"🩺",includes:["Complete Blood Count","Liver Function Test","Kidney Function Test","Total Cholesterol","Fasting Blood Sugar","TSH Ultrasensitive","Vitamin D (25-OH)"]},
+  {id:2,name:"Diabetes Screening",tests:8,price:499,mrp:900,fasting:true,report:"Same day",cat:"Diabetes",icon:"🩸",includes:["HbA1c","Fasting Blood Sugar","Total Cholesterol","Kidney Function Test"]},
+  {id:3,name:"Thyroid Profile (T3 T4 TSH)",tests:3,price:399,mrp:700,fasting:false,report:"Same day",cat:"Thyroid",icon:"🦋",includes:["Total T3","Total T4","TSH Ultrasensitive"]},
+  {id:4,name:"Complete Blood Count (CBC)",tests:24,price:299,mrp:450,fasting:false,report:"6 hours",cat:"Blood",icon:"🩸",includes:["Hemoglobin","Total Cholesterol","Fasting Blood Sugar"]},
+  {id:5,name:"Heart / Lipid Profile",tests:8,price:499,mrp:850,fasting:true,report:"Same day",cat:"Heart",icon:"❤️",includes:["Total Cholesterol","Fasting Blood Sugar","Hemoglobin"]},
+  {id:6,name:"Vitamin D & B12",tests:2,price:899,mrp:1600,fasting:false,report:"24 hours",cat:"Vitamin",icon:"☀️",includes:["Vitamin D (25-OH)","Vitamin B12"]},
+  {id:7,name:"Women's Wellness Package",tests:52,price:1499,mrp:3200,fasting:true,report:"Next day",cat:"Women",icon:"🌸",includes:["Complete Blood Count","TSH Ultrasensitive","Vitamin D (25-OH)","Vitamin B12","Total Cholesterol","Fasting Blood Sugar"]},
+  {id:8,name:"Senior Citizen Package",tests:68,price:2499,mrp:4800,fasting:true,report:"Next day",cat:"Senior",icon:"👴",includes:["Complete Blood Count","Liver Function Test","Kidney Function Test","Total Cholesterol","HbA1c","TSH Ultrasensitive","Vitamin D (25-OH)"]},
+];
+const BOOKING_STEPS=[{t:"Booking Confirmed",s:"Home collection scheduled"},{t:"Phlebotomist Assigned",s:"Our agent is on the way"},{t:"Sample Collected",s:"Sample picked from home"},{t:"Testing in Lab",s:"Your sample is being tested"},{t:"Report Ready",s:"Your report is ready to view"}];
+let bookings=[
+  {id:'LAB-55240',pkgId:1,date:fmtDate(isoIn(-4)),slot:'7 – 9 AM',status:4,patient:'Aarav Sharma',paid:false,price:999},
+  {id:'LAB-55198',pkgId:3,date:fmtDate(isoIn(-2)),slot:'9 – 11 AM',status:4,patient:'Aarav Sharma',paid:true,price:399},
+  {id:'LAB-55120',pkgId:2,date:fmtDate(isoIn(1)),slot:'7 – 9 AM',status:1,patient:'Aarav Sharma',paid:true,price:499},
+];
+let curPkg=null,bkPkg=null,bkDate=isoIn(1),bkSlot='7 – 9 AM',curReport=null;
+const pkgDisc=p=>Math.round((p.mrp-p.price)/p.mrp*100);
+
+function renderPkgRail(){const el=$('pkgRail');if(!el)return;el.innerHTML=PACKAGES.slice(0,6).map(p=>`<div class="pkg-rc"><div class="pn">${p.icon} ${p.name}</div><div class="pm">${p.tests} tests · ${p.report}</div><div class="pp">${money(p.price)}<s>${money(p.mrp)}</s></div><button class="pb" onclick="openPackage(${p.id})">Book Now</button></div>`).join('');}
+function renderPackages(){$('pkgListContent').innerHTML='<div class="pad">'+PACKAGES.map(p=>`<div class="pkg-card"><div class="pkg-top"><div class="pkg-ic">${p.icon}</div><div style="flex:1"><div class="pkg-name">${p.name}</div><div class="pkg-meta">Includes ${p.tests} tests · Report ${p.report}</div><div class="pkg-tags"><span>🏠 Home collection</span>${p.fasting?'<span>🍽️ Fasting</span>':'<span>No fasting</span>'}</div></div></div><div class="pkg-bottom"><div class="pkg-price"><b>${money(p.price)}</b><s>${money(p.mrp)}</s> <span style="color:var(--green);font-weight:800;font-size:12px">${pkgDisc(p)}% off</span></div><button class="pkg-book" onclick="openPackage(${p.id})">Book Now</button></div></div>`).join('')+'</div>';}
+function openPackage(id){const p=PACKAGES.find(x=>x.id===id);curPkg=p;
+  $('pkgDetailContent').innerHTML=`<div class="pad">
+    <div class="pkg-card" style="margin:0"><div class="pkg-top"><div class="pkg-ic" style="width:56px;height:56px;font-size:28px">${p.icon}</div><div style="flex:1"><div class="pkg-name" style="font-size:17px">${p.name}</div><div class="pkg-meta">${p.tests} tests included</div><div class="pkg-tags"><span>🏠 Home sample collection</span><span>📄 Report ${p.report}</span>${p.fasting?'<span>🍽️ 10–12 hrs fasting</span>':'<span>No fasting needed</span>'}</div></div></div>
+    <div class="pkg-bottom"><div class="pkg-price"><b style="font-size:24px">${money(p.price)}</b><s>${money(p.mrp)}</s></div><span style="color:var(--green);font-weight:800">${pkgDisc(p)}% OFF</span></div></div>
+    <div class="blockt">Tests included (${p.tests})</div>
+    <div class="pkg-incl">${p.includes.map(t=>`<div class="ii">${t}</div>`).join('')}</div>
+    <div class="rx-note" style="margin-top:12px">🧪 A certified phlebotomist collects your sample at home. Reports are shared digitally in-app — no need to visit the lab.</div>
+  </div>`;
+  $('pkgBar').innerHTML=`<div class="price-min"><b>${money(p.price)}</b><small>${p.tests} tests</small></div><button onclick="startBooking(${p.id})">Book Home Collection</button>`;
+  go('screen-package');
+}
+function startBooking(id){bkPkg=PACKAGES.find(x=>x.id===id);bkDate=isoIn(1);bkSlot='7 – 9 AM';renderBookingForm();go('screen-booking');}
+function renderBookingForm(){const p=bkPkg;const dates=[0,1,2,3,4].map(d=>isoIn(d));const slots=['7 – 9 AM','9 – 11 AM','11 AM – 1 PM','4 – 6 PM'];
+  $('bookingContent').innerHTML=`<div class="pad">
+    <div class="pkg-card" style="margin:0 0 14px"><div class="pkg-top"><div class="pkg-ic">${p.icon}</div><div><div class="pkg-name">${p.name}</div><div class="pkg-meta">${p.tests} tests · ${money(p.price)}</div></div></div></div>
+    <div class="blockt" style="margin-top:0">Patient Details</div>
+    <div class="book-row"><div class="book-field" style="flex:1"><label>Full Name</label><input id="bkName" value="Aarav Sharma"></div><div class="book-field" style="flex:0 0 84px"><label>Age</label><input id="bkAge" value="32"></div></div>
+    <div class="book-field"><label>Gender</label><select id="bkGender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+    <div class="blockt">Collection Date</div>
+    <div class="datechips">${dates.map(iso=>{const s=fmtShort(iso);const lbl=iso===isoIn(0)?'Today':iso===isoIn(1)?'Tomorrow':s.dow;return `<button class="dchip ${iso===bkDate?'sel':''}" onclick="bkDate='${iso}';renderBookingForm()"><b>${s.dm.split(' ')[0]}</b><small>${lbl}</small></button>`;}).join('')}</div>
+    <div class="blockt">Time Slot</div>
+    <div class="slotchips">${slots.map(s=>`<button class="dchip ${s===bkSlot?'sel':''}" onclick="bkSlot='${s}';renderBookingForm()"><b>${s}</b></button>`).join('')}</div>
+    <div class="blockt">Sample Collection Address</div>
+    <div class="addr-card"><span style="font-size:20px">🏠</span><div><b>Aarav Sharma<span class="tagd">Home</span></b><p>24, Lake View Residency, MG Road, Kochi, Kerala – 682016</p></div><button class="change">Change</button></div>
+    <div class="price-card"><h4>Bill Details</h4><div class="pl"><span>Package Price</span><span>${money(p.price)}</span></div><div class="pl"><span>Home Collection</span><span class="free">FREE</span></div><div class="pl tot"><span>Amount</span><span>${money(p.price)}</span></div></div>
+    <div class="rx-note" style="margin-top:12px">💡 Pay now or later — your digital report unlocks instantly once payment is completed.</div>
+  </div>
+  <div class="actionbar"><div class="price-min"><b>${money(p.price)}</b><small>${fmtShort(bkDate).dm}</small></div><button onclick="confirmBooking()">Confirm Booking</button></div>`;
+}
+function confirmBooking(){const id='LAB-'+(55000+Math.floor((bookings.length+1)*211+bkPkg.id*13));bookings.unshift({id,pkgId:bkPkg.id,date:fmtDate(bkDate),slot:bkSlot,status:0,patient:($('bkName')&&$('bkName').value)||'Aarav Sharma',paid:false,price:bkPkg.price});
+  $('succTitle').textContent='Booking Confirmed 🧪';$('succMsg').textContent=bkPkg.name+' · home collection on '+fmtDate(bkDate)+', '+bkSlot;$('orderId').textContent='#'+id;go('screen-success');navStack=[];}
+function renderBookings(){if(!bookings.length){$('bookingsContent').innerHTML=`<div class="empty"><span class="e">🧪</span>No lab bookings yet<br><button onclick="go('screen-packages')">Book a Test</button></div>`;return;}
+  $('bookingsContent').innerHTML='<div class="pad">'+bookings.map(b=>{const p=PACKAGES.find(x=>x.id===b.pkgId);const ready=b.status>=BOOKING_STEPS.length-1;
+    return `<div class="list-card" onclick="trackBooking('${b.id}')"><div class="lc-top"><span class="lc-id">🧪 ${b.id}</span><span class="lc-st ${ready?'done':'prog'}">${BOOKING_STEPS[b.status].t}</span></div>
+    <div class="lc-body"><div class="od-img" style="display:grid;place-items:center;font-size:22px">${p.icon}</div><div><div class="lc-items">${p.name}</div><div class="lc-meta">${b.date} · ${b.slot} · ${b.patient}</div></div></div>
+    <div class="lc-acts">${ready?(b.paid?`<button class="pri" onclick="event.stopPropagation();openReport('${b.id}')">📄 View Report</button>`:`<button class="pri" style="border-color:var(--green);color:var(--green)" onclick="event.stopPropagation();payBooking('${b.id}')">Pay ${money(b.price)} & View</button>`):`<button class="pri" onclick="event.stopPropagation();trackBooking('${b.id}')">Track →</button>`}</div></div>`;}).join('')+'</div>';}
+function trackBooking(id){const b=bookings.find(x=>x.id===id);if(!b)return;const p=PACKAGES.find(x=>x.id===b.pkgId);let extra='';
+  if(b.status>=BOOKING_STEPS.length-1){extra=b.paid?`<div class="list-card"><div class="lc-top"><span class="lc-id">📄 Lab Report</span><span class="lc-st done">Ready · Paid</span></div><div class="lc-meta" style="margin-bottom:10px">Your digital report is ready — view it instantly.</div><button class="pkg-book" style="width:100%" onclick="openReport('${b.id}')">📄 View Report (PDF)</button></div>`:`<div class="list-card"><div class="lc-top"><span class="lc-id">📄 Lab Report</span><span class="lc-st rev">Payment pending</span></div><div class="lc-meta" style="margin-bottom:10px">Pay ${money(b.price)} to unlock and view your report instantly.</div><button class="pkg-book" style="width:100%;background:var(--green)" onclick="payBooking('${b.id}')">Pay ${money(b.price)} &amp; View Report</button></div>`;}
+  renderTrack('🧪 '+b.id,BOOKING_STEPS,b.status,`${p.name} · ${b.date}, ${b.slot}`,null,extra);}
+function payBooking(id){const b=bookings.find(x=>x.id===id);if(!b)return;b.paid=true;showToast('Payment successful ✓ Report unlocked');openReport(id);}
+function openReport(id){const b=bookings.find(x=>x.id===id);if(!b)return;const p=PACKAGES.find(x=>x.id===b.pkgId);curReport=b;
+  if(!b.paid){$('reportContent').innerHTML=`<div class="paylock"><div class="pe">🔒</div><b>Report locked</b><small>Pay ${money(b.price)} to view your ${p.name} report instantly</small><br><button class="pkg-book" style="background:var(--green);margin-top:16px" onclick="payBooking('${b.id}')">Pay ${money(b.price)} &amp; Unlock Report</button></div>`;go('screen-report');return;}
+  const rows=reportRows(p);
+  $('reportContent').innerHTML=`<div class="report">
+    <div class="rep-head"><b>KNM Diagnostics — Lab Report</b><p>${p.name}</p></div>
+    <div class="rep-meta"><div>Patient<b>${b.patient}</b></div><div>Booking ID<b>${b.id}</b></div><div>Collected<b>${b.date}</b></div><div>Report Date<b>${fmtDate(isoIn(0))}</b></div></div>
+    <div class="rep-table"><div class="rep-row h"><span>Test</span><span>Result</span><span>Reference</span><span>Status</span></div>
+      ${rows.map(r=>`<div class="rep-row"><span class="tn">${r.name}</span><span class="val">${r.val}${r.unit?' '+r.unit:''}</span><span style="color:var(--muted)">${r.range}</span><span class="rep-flag ${r.flag}">${r.flag==='n'?'Normal':r.flag==='h'?'High':'Low'}</span></div>`).join('')}
+    </div>
+    <div class="rep-foot">✅ <b>Verified by Dr. R. Menon, MD (Pathology).</b> Digitally signed report. Please consult your physician before acting on results.</div>
+  </div>
+  <div style="padding:0 14px 6px"><button class="pkg-book" style="width:100%" onclick="downloadReport()">⬇️ Download PDF</button></div>`;
+  go('screen-report');
+}
+function reportRows(p){const bank={'HbA1c':{u:'%',r:'4.0–5.6',v:'5.4',f:'n'},'Fasting Blood Sugar':{u:'mg/dL',r:'70–100',v:'96',f:'n'},'Total T3':{u:'ng/dL',r:'80–200',v:'128',f:'n'},'Total T4':{u:'µg/dL',r:'5.1–14.1',v:'9.2',f:'n'},'TSH Ultrasensitive':{u:'µIU/mL',r:'0.4–4.0',v:'4.6',f:'h'},'Total Cholesterol':{u:'mg/dL',r:'<200',v:'188',f:'n'},'Hemoglobin':{u:'g/dL',r:'13–17',v:'14.2',f:'n'},'Vitamin D (25-OH)':{u:'ng/mL',r:'30–100',v:'22',f:'l'},'Vitamin B12':{u:'pg/mL',r:'200–900',v:'410',f:'n'},'Complete Blood Count':{u:'',r:'Normal',v:'Normal',f:'n'},'Liver Function Test':{u:'',r:'Normal',v:'Normal',f:'n'},'Kidney Function Test':{u:'',r:'Normal',v:'Normal',f:'n'}};
+  return p.includes.map((name)=>{const b=bank[name];if(b)return {name,val:b.v,unit:b.u,range:b.r,flag:b.f};return {name,val:'Normal',unit:'',range:'—',flag:'n'};});}
+function downloadReport(){showToast('Report PDF downloaded 📄');}
 
 /* navigation */
 const NAV_IDX={'screen-home':0,'screen-categories':1,'screen-cart':2,'screen-account':3};
@@ -813,6 +979,8 @@ function activate(id){
   if(id==='screen-orders')renderOrders();
   if(id==='screen-prescriptions')renderRxList();
   if(id==='screen-subs')renderSubs();
+  if(id==='screen-packages')renderPackages();
+  if(id==='screen-bookings')renderBookings();
   if(id==='screen-account')renderAccount();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $(id).classList.add('active');applyChrome(id);currentScreen=id;window.scrollTo(0,0);

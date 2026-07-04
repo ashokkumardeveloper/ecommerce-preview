@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KNM Medicine · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Flutter-buildable admin: Container/BoxDecoration, LinearGradient, BoxShadow, ClipRRect, Row/Column/Wrap,
+     ListView, DataTable-style rows, bar chart = sized Containers (fl_chart), Switch, DropdownButton,
+     Dialog(modal), Stepper. No backdrop-filter, no background-clip:text, no organic blob radius,
+     no keyframe morphing. Simple fade/scale only. Medicine thumbnails = type-accurate emoji on a
+     category-tinted Container tile (no web photos); package/booking icons use their own emoji. */
+  :root{
+    /* THEME — KNM Medicine (light blue, clean/medical) */
+    --pri:#1e9bd7; --pri-d:#0b7ec2; --acc:#16a34a;
+    --side:#0f2e40; --side-txt:#c7dcea; --side-act:#5cc0ef;
+    --bg:#f1f8fc; --card:#fff; --ink:#123549; --muted:#6d8ba0; --line:#e1eef6;
+    --amber:#d97706; --red:#e2574c; --green:#16a34a;
+    --font-head:'Poppins',sans-serif; --font-body:'Poppins',sans-serif;
+    --shadow:0 6px 18px rgba(30,155,215,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--ink);line-height:1.45}
+  h1,h2,h3,h4,.brand-name{font-family:var(--font-head)}
+  a{text-decoration:none;color:inherit}
+  img{display:block;max-width:100%}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit}
+  .hidden{display:none!important}
+
+  .admin{display:flex;min-height:100vh}
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{width:240px;background:var(--side);color:var(--side-txt);flex:0 0 auto;display:flex;flex-direction:column;
+    position:sticky;top:0;height:100vh;padding:20px 14px}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 4px 18px}
+  .brand .rx-cross{width:34px;height:34px;border-radius:10px;background:#fff;color:var(--pri);display:grid;place-items:center;font-size:21px;font-weight:800;flex:0 0 auto}
+  .brand-name{font-size:19px;font-weight:800;color:#fff;line-height:1}
+  .brand-name small{display:block;font-weight:600;font-size:9px;opacity:.75;letter-spacing:1px;margin-top:2px}
+  .brand .pill{background:var(--pri);color:#fff;font-family:var(--font-body);font-weight:800;font-size:9px;
+    letter-spacing:1px;padding:3px 7px;border-radius:5px}
+  .side-nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+  .side-nav button{display:flex;align-items:center;gap:12px;background:none;border:none;color:var(--side-txt);
+    font-weight:600;font-size:14px;padding:12px 14px;border-radius:10px;text-align:left;transition:.15s}
+  .side-nav button .ic{font-size:18px}
+  .side-nav button:hover{background:rgba(255,255,255,.08)}
+  .side-nav button.active{background:rgba(255,255,255,.14);color:#fff;box-shadow:inset 3px 0 0 var(--side-act)}
+  .view-store{margin-top:auto;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);
+    color:#fff;font-weight:700;font-size:13.5px;padding:12px 14px;border-radius:10px}
+  .view-store:hover{background:rgba(255,255,255,.16)}
+
+  /* ---------- CONTENT ---------- */
+  .content{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(241,248,252,.94);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:14px;padding:16px 24px}
+  .mobile-brand{display:none;align-items:center;gap:8px;font-family:var(--font-head);font-weight:800;font-size:17px}
+  .mobile-brand .rx-cross{width:28px;height:28px;border-radius:8px;background:var(--pri);color:#fff;display:grid;place-items:center;font-size:17px}
+  .topbar h1{font-size:23px;font-weight:700}
+  .admin-chip{margin-left:auto;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+    padding:6px 12px 6px 6px;border-radius:999px;box-shadow:var(--shadow)}
+  .admin-chip .av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pri),var(--side-act));
+    color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+  .admin-chip b{font-size:13px}.admin-chip small{color:var(--muted);font-size:11px;font-weight:600;display:block;line-height:1}
+  .mtabs{display:none;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none}
+  .mtabs::-webkit-scrollbar{display:none}
+  .mtabs button{flex:0 0 auto;background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:700;
+    font-size:13px;padding:8px 16px;border-radius:999px}
+  .mtabs button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .view{display:none;padding:22px 24px 46px}
+  .view.active{display:block;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- KPI CARDS ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .kpi .k-top{display:flex;align-items:center;justify-content:space-between}
+  .kpi .k-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px}
+  .kpi .k-trend{font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px}
+  .kpi .k-trend.up{background:#dcfce7;color:var(--green)} .kpi .k-trend.down{background:#fee2e2;color:var(--red)}
+  .kpi .k-trend.warn{background:#fef3c7;color:var(--amber)}
+  .kpi b{font-family:var(--font-head);font-size:29px;display:block;margin-top:12px}
+  .kpi small{color:var(--muted);font-weight:600}
+
+  .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .panel-h h3{font-size:17px;font-weight:700}
+  .panel-h a,.panel-h .link{color:var(--pri);font-weight:700;font-size:13px;background:none;border:none}
+  .grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:16px}
+
+  /* chart */
+  .chart{display:flex;align-items:flex-end;gap:12px;height:180px;padding-top:10px}
+  .chart .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+  .chart .bar{width:100%;max-width:40px;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--pri),var(--acc));position:relative}
+  .chart .bar span{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--muted)}
+  .chart .day{font-size:11px;font-weight:700;color:var(--muted)}
+
+  /* mini list rows */
+  .mini{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .mini:last-child{border:none}
+  .mini .m-img{width:42px;height:42px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto;display:grid;place-items:center;font-size:20px}
+  .mini .m-img img{width:100%;height:100%;object-fit:cover}
+  .mini .m-main{flex:1;min-width:0}
+  .mini .m-name{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mini .m-sub{color:var(--muted);font-weight:600;font-size:12px}
+  .mini .m-right{font-weight:800;font-size:13.5px;text-align:right;white-space:nowrap}
+  .stock-red{color:var(--red)}
+
+  /* ---------- TOOLBAR ---------- */
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;min-width:220px;flex:1;max-width:340px}
+  .search input{border:none;outline:none;background:none;font-size:14px;width:100%;font-weight:500}
+  .fpills{display:flex;gap:6px;flex-wrap:wrap}
+  .fpill{background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:12.5px;
+    padding:8px 14px;border-radius:999px}
+  .fpill.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+  .btn{background:var(--pri);color:#fff;border:none;font-weight:700;font-size:13.5px;padding:10px 18px;border-radius:10px;
+    display:inline-flex;align-items:center;gap:7px}
+  .btn:hover{background:var(--pri-d)}
+  .btn.acc{background:var(--acc)} .btn.acc:hover{background:#128a3d}
+  .btn.ghost{background:#fff;color:var(--pri);border:1.5px solid var(--line)}
+  .btn.ghost:hover{background:var(--bg)}
+  .btn.danger{background:#fff;color:var(--red);border:1.5px solid #f2c4c0}
+  .btn.danger:hover{background:#fdecea}
+  .btn.block{width:100%;justify-content:center;padding:14px}
+
+  /* ---------- PRODUCT / ORDER ROWS ---------- */
+  .prow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:12px 14px;margin-bottom:10px}
+  .prow .p-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto;display:grid;place-items:center;font-size:24px}
+  .prow .p-img img{width:100%;height:100%;object-fit:cover}
+  .prow .p-main{flex:1;min-width:150px}
+  .prow .p-name{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .prow .p-attr{color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
+  .prow .p-price{font-family:var(--font-head);font-weight:700;font-size:16px;margin-top:2px}
+  .prow .p-price s{font-family:var(--font-body);color:var(--muted);font-weight:500;font-size:12px;margin-left:5px}
+  .rx-chip{background:var(--rx-l,#fdecea);color:var(--red);font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px}
+  .badge{font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap}
+  .badge.in{background:#dcfce7;color:var(--green)} .badge.low{background:#fef3c7;color:var(--amber)} .badge.out{background:#fee2e2;color:var(--red)}
+  .switch{width:44px;height:24px;border-radius:999px;background:#cddfec;border:none;position:relative;transition:.2s;flex:0 0 auto}
+  .switch.on{background:var(--green)}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.on::after{left:22px}
+  .icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:15px;display:grid;place-items:center}
+  .icon-btn:hover{background:var(--bg)}
+  .p-acts{display:flex;gap:8px;align-items:center}
+
+  /* order / generic list row */
+  .orow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+    border-radius:14px;padding:14px;margin-bottom:10px}
+  .orow .o-id{font-weight:800;font-size:14px}
+  .orow .o-cust{color:var(--muted);font-weight:600;font-size:12.5px;margin-top:2px}
+  .orow .o-mid{flex:1;min-width:150px}
+  .orow .o-items{color:var(--muted);font-weight:600;font-size:12.5px}
+  .orow .o-total{font-family:var(--font-head);font-weight:700;font-size:16px}
+  .orow .o-ficon{width:48px;height:48px;border-radius:10px;background:var(--bg);display:grid;place-items:center;font-size:22px;flex:0 0 auto;overflow:hidden}
+  .orow .o-ficon img{width:100%;height:100%;object-fit:cover}
+  .st{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;white-space:nowrap;display:inline-block}
+  /* order statuses */
+  .st.confirmed{background:#e0e7ff;color:#4338ca}
+  .st.packed{background:#ede9fe;color:#6d28d9}
+  .st.shipped{background:#dbeafe;color:#1d4ed8}
+  .st.out-for-delivery{background:#cffafe;color:#0e7490}
+  .st.delivered{background:#dcfce7;color:#15803d}
+  .st.cancelled{background:#fee2e2;color:#b91c1c}
+  /* prescription statuses */
+  .st.review{background:#fef3c7;color:#b45309}
+  .st.quotation-sent{background:#e0f2fe;color:#0369a1}
+  .st.approved{background:#dcfce7;color:#15803d}
+  .st.rejected{background:#fee2e2;color:#b91c1c}
+  .st.dispatched{background:#dbeafe;color:#1d4ed8}
+  /* booking statuses */
+  .st.booked{background:#e0e7ff;color:#4338ca}
+  .st.assigned{background:#e0f2fe;color:#0369a1}
+  .st.sample-collected{background:#ede9fe;color:#6d28d9}
+  .st.testing{background:#cffafe;color:#0e7490}
+  .st.report-ready{background:#dcfce7;color:#15803d}
+  /* payment pills */
+  .st.paid{background:#dcfce7;color:#15803d}
+  .st.unpaid{background:#fef3c7;color:#b45309}
+  /* attached report file chip */
+  .file-chip{display:flex;align-items:center;gap:10px;background:#f4fafe;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:4px}
+  .file-chip .fc-ic{width:36px;height:36px;border-radius:9px;background:#e0f2fe;display:grid;place-items:center;font-size:18px;flex:0 0 auto}
+  .file-chip b{font-weight:700;font-size:13px} .file-chip small{color:var(--green);font-weight:700;font-size:11.5px;display:block}
+  .file-chip .fc-act{margin-left:auto;border:1.5px solid var(--line);background:#fff;color:var(--pri);font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:9px}
+
+  /* ---------- DETAIL SUB-VIEW ---------- */
+  .od-back{display:inline-flex;align-items:center;gap:8px;background:none;border:none;color:var(--pri);font-weight:700;font-size:14px;margin-bottom:14px}
+  .od-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+  .od-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+  .od-head h2{font-size:23px;font-weight:700}
+  .od-head .od-meta{color:var(--muted);font-weight:600;font-size:13px;margin-top:2px}
+  .od-status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .od-status-row select{border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-weight:600;font-size:13px;background:#fff;color:var(--ink)}
+  .od-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+  .od-item:last-child{border:none}
+  .od-item .oi-img{width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--bg);flex:0 0 auto;display:grid;place-items:center;font-size:22px}
+  .od-item .oi-img img{width:100%;height:100%;object-fit:cover}
+  .od-item .oi-main{flex:1;min-width:0}
+  .od-item .oi-name{font-weight:700;font-size:14px}
+  .od-item .oi-attr{color:var(--muted);font-weight:600;font-size:12px}
+  .od-item .oi-price{font-weight:800;text-align:right;white-space:nowrap}
+  .od-item .oi-price small{display:block;color:var(--muted);font-weight:600;font-size:11px}
+  .sum-line{display:flex;justify-content:space-between;padding:6px 0;font-weight:600;color:#3f5a6d;font-size:14px}
+  .sum-line.tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:12px;font-family:var(--font-head);font-weight:700;font-size:19px;color:var(--ink)}
+  .sum-line .free{color:var(--green);font-weight:800}
+  .info-line{display:flex;gap:10px;padding:8px 0;font-size:13.5px}
+  .info-line .il-ic{width:22px;text-align:center;flex:0 0 auto}
+  .info-line b{font-weight:700}.info-line span{color:var(--muted);font-weight:500}
+  .card-title{font-family:var(--font-head);font-weight:700;font-size:16px;margin-bottom:8px}
+  .tl{display:flex;flex-direction:column;margin-top:6px}
+  .tl .step{display:flex;gap:12px;position:relative}
+  .tl .dot{width:22px;height:22px;border-radius:50%;background:#d5e6f0;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;z-index:2;flex:0 0 auto}
+  .tl .step.done .dot{background:var(--pri)}
+  .tl .step.done.last .dot{background:var(--green)}
+  .tl .step:not(:last-child)::before{content:"";position:absolute;left:10px;top:22px;height:100%;width:2px;background:#d5e6f0}
+  .tl .step.done:not(:last-child)::before{background:var(--pri)}
+  .tl .s-info{padding:1px 0 16px}
+  .tl .s-info b{font-size:13.5px;color:var(--muted)}
+  .tl .step.done .s-info b{color:var(--ink)}
+  .tl .step.current .s-info b{color:var(--pri-d)}
+  .tl .s-info small{display:block;color:var(--muted);font-weight:600;font-size:12px}
+  .cancel-banner{background:#fee2e2;color:#b91c1c;font-weight:800;padding:12px 14px;border-radius:10px;font-size:13.5px}
+  .reject-banner{background:#fee2e2;color:#b91c1c;font-weight:700;padding:12px 14px;border-radius:10px;font-size:13px}
+  .stk-col{display:flex;flex-direction:column;gap:16px}
+
+  /* prescription preview box */
+  .rx-preview{border:2px dashed var(--pri);background:#f4fafe;border-radius:16px;padding:26px 16px;text-align:center;margin-bottom:12px}
+  .rx-preview .rp-ic{font-size:52px}
+  .rx-preview b{display:block;font-weight:700;margin-top:10px;font-size:14px}
+  .rx-preview small{color:var(--muted);font-weight:600;font-size:12.5px}
+  .rx-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .rx-actions .btn{flex:1;justify-content:center;min-width:130px}
+
+  /* ---------- PACKAGES ---------- */
+  .pkg-icon{width:52px;height:52px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-size:26px;flex:0 0 auto}
+  .tag{background:#e0f2fe;color:#0369a1;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:6px}
+  .tag.fast{background:#fef3c7;color:#b45309} .tag.nofast{background:#dcfce7;color:#15803d}
+
+  /* ---------- INVENTORY ---------- */
+  .inv-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .inv-chip{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 18px;box-shadow:var(--shadow)}
+  .inv-chip b{font-family:var(--font-head);font-weight:700;font-size:22px;display:block}
+  .inv-chip small{color:var(--muted);font-weight:700;font-size:12px}
+  .inv-chip.in b{color:var(--green)} .inv-chip.low b{color:var(--amber)} .inv-chip.out b{color:var(--red)}
+  .stepper-mini{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .stepper-mini button{width:34px;height:34px;border:none;background:var(--bg);font-weight:800;font-size:16px;color:var(--ink)}
+  .stepper-mini b{min-width:44px;text-align:center;font-size:15px}
+
+  /* ---------- MODAL ---------- */
+  .modal{position:fixed;inset:0;z-index:80;background:rgba(18,53,73,.5);display:none;place-items:center;padding:18px}
+  .modal.open{display:grid;animation:fade .18s ease}
+  .modal-card{background:#fff;border-radius:18px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+  .modal-head{position:sticky;top:0;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);z-index:2}
+  .modal-head h3{font-size:19px;font-weight:700}
+  .modal-x{border:none;background:var(--bg);width:34px;height:34px;border-radius:9px;font-size:16px}
+  .modal-body{padding:20px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-weight:700;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;font-weight:500;background:#fff;outline:none;color:var(--ink)}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pri)}
+  .field textarea{resize:vertical;min-height:64px}
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .img-picker{display:flex;gap:14px;align-items:flex-start}
+  .img-preview{width:88px;height:88px;border-radius:12px;overflow:hidden;background:var(--bg);flex:0 0 auto;border:1px solid var(--line)}
+  .img-preview img{width:100%;height:100%;object-fit:cover}
+  .toggle-field{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:10px;padding:11px 14px}
+  .toggle-field span{font-weight:700;font-size:13.5px}
+  .modal-foot{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px;justify-content:flex-end}
+  .hint{color:var(--muted);font-weight:600;font-size:11.5px;margin-top:4px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;
+    font-weight:700;padding:13px 22px;border-radius:12px;z-index:90;box-shadow:0 12px 30px rgba(0,0,0,.25);transition:.35s;font-size:14px}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .empty-panel{text-align:center;color:var(--muted);font-weight:700;padding:40px 20px}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .mobile-brand{display:flex}
+    .topbar h1{display:none}
+    .mtabs{display:flex}
+    .kpis{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .od-grid{grid-template-columns:1fr}
+    .frow,.frow3{grid-template-columns:1fr}
+  }
+  @media(max-width:520px){ .prow .p-price,.orow .o-total{width:100%} }
+</style>
+</head>
+<body>
+<div class="admin">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand"><span class="rx-cross">✚</span><span class="brand-name">KNM Medicine<small>ONLINE PHARMACY</small></span><span class="pill">ADMIN</span></div>
+    <nav class="side-nav" id="sideNav">
+      <button data-sec="dashboard" class="active"><span class="ic">📊</span> Dashboard</button>
+      <button data-sec="products"><span class="ic">💊</span> Products</button>
+      <button data-sec="orders"><span class="ic">🧾</span> Orders</button>
+      <button data-sec="prescriptions"><span class="ic">📄</span> Prescriptions</button>
+      <button data-sec="packages"><span class="ic">🧪</span> Packages</button>
+      <button data-sec="bookings"><span class="ic">📅</span> Bookings</button>
+      <button data-sec="inventory"><span class="ic">📥</span> Inventory</button>
+    </nav>
+    <a class="view-store" href="../index.html">🛍️ View Store</a>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="topbar">
+      <div class="mobile-brand"><span class="rx-cross">✚</span> KNM Medicine</div>
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="admin-chip"><span class="av">KP</span><div><b>Pharmacist</b><small>Store Admin</small></div></div>
+    </div>
+    <div class="mtabs" id="mtabs">
+      <button data-sec="dashboard" class="active">📊 Dashboard</button>
+      <button data-sec="products">💊 Products</button>
+      <button data-sec="orders">🧾 Orders</button>
+      <button data-sec="prescriptions">📄 Prescriptions</button>
+      <button data-sec="packages">🧪 Packages</button>
+      <button data-sec="bookings">📅 Bookings</button>
+      <button data-sec="inventory">📥 Inventory</button>
+    </div>
+
+    <section id="view-dashboard" class="view active"></section>
+    <section id="view-products" class="view"></section>
+    <section id="view-orders" class="view"></section>
+    <section id="view-order-detail" class="view"></section>
+    <section id="view-prescriptions" class="view"></section>
+    <section id="view-rx-detail" class="view"></section>
+    <section id="view-packages" class="view"></section>
+    <section id="view-bookings" class="view"></section>
+    <section id="view-booking-detail" class="view"></section>
+    <section id="view-inventory" class="view"></section>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal" id="prodModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="prodModalTitle">Add Product</h3><button class="modal-x" onclick="closeProd()">✕</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Thumbnail</label>
+        <div class="img-picker">
+          <div class="img-preview" id="f_preview"></div>
+          <div style="flex:1">
+            <div class="hint" style="margin-top:0">A type-accurate icon is picked automatically from the name & category (matching the storefront). Paste a real image URL below only if you have one.</div>
+            <input id="f_img" placeholder="Paste image URL (optional)" style="margin-top:8px" oninput="updatePreview()">
+            <input id="f_q" type="hidden">
+          </div>
+        </div>
+      </div>
+      <div class="field"><label>Medicine Name</label><input id="f_name" placeholder="e.g. Paracetamol 650mg" oninput="updatePreview()"></div>
+      <div class="frow">
+        <div class="field"><label>Category</label><select id="f_cat" onchange="updatePreview()"></select></div>
+        <div class="field"><label>Manufacturer</label><input id="f_mfr" placeholder="e.g. Cipla"></div>
+      </div>
+      <div class="field"><label>Pack</label><input id="f_pack" placeholder="e.g. Strip of 10 tablets"></div>
+      <div class="frow3">
+        <div class="field"><label>Price (₹)</label><input id="f_price" type="number" placeholder="28"></div>
+        <div class="field"><label>MRP (₹)</label><input id="f_mrp" type="number" placeholder="35"></div>
+        <div class="field"><label>Stock</label><input id="f_stock" type="number" placeholder="60"></div>
+      </div>
+      <div class="field">
+        <div class="toggle-field"><span>℞ Prescription required?</span><button class="switch" id="f_rx" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+      <div class="field"><label>Composition</label><input id="f_comp" placeholder="e.g. Paracetamol 650mg"></div>
+      <div class="field"><label>Uses</label><textarea id="f_uses" placeholder="e.g. Fever, mild to moderate pain"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closeProd()">Cancel</button>
+      <button class="btn" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- PACKAGE MODAL -->
+<div class="modal" id="pkgModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="pkgModalTitle">Add Package</h3><button class="modal-x" onclick="closePkg()">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Package Name</label><input id="g_name" placeholder="e.g. Full Body Checkup Advanced"></div>
+      <div class="frow">
+        <div class="field"><label>Category</label><select id="g_cat"></select></div>
+        <div class="field"><label>Tests Count</label><input id="g_tests" type="number" placeholder="72"></div>
+      </div>
+      <div class="frow3">
+        <div class="field"><label>Price (₹)</label><input id="g_price" type="number" placeholder="1499"></div>
+        <div class="field"><label>MRP (₹)</label><input id="g_mrp" type="number" placeholder="3200"></div>
+        <div class="field"><label>Report Time</label><input id="g_report" placeholder="24 hrs"></div>
+      </div>
+      <div class="field">
+        <div class="toggle-field"><span>Fasting required?</span><button class="switch" id="g_fast" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+      <div class="field"><label>Includes Tests</label><textarea id="g_incl" placeholder="e.g. CBC, Lipid Profile, Liver Function, Thyroid…"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn ghost" onclick="closePkg()">Cancel</button>
+      <button class="btn" onclick="savePackage()">Save Package</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG START ===================== */
+const BRAND={ name:'KNM Medicine', cur:'₹' };
+const CATEGORIES=['Medicines','Diabetes Care','Vitamins','Devices','Personal Care','Wellness'];
+
+/* MEDICINES — reused from KNM storefront `meds`, extended with stock + active for admin */
+let PRODUCTS=[
+  {id:1,name:"Paracetamol 650mg",mfr:"KNM Pharma",pack:"Strip of 15 tablets",price:28,mrp:35,rx:false,cat:"Medicines",q:"medicine,tablets",lock:11,comp:"Paracetamol 650mg",uses:"Fever, mild to moderate pain",dose:"1 tablet up to 3 times a day",stock:240,active:true},
+  {id:2,name:"Amoxicillin 500mg",mfr:"Cipla",pack:"Strip of 10 capsules",price:92,mrp:120,rx:true,cat:"Medicines",q:"capsule,pills",lock:21,comp:"Amoxicillin 500mg",uses:"Bacterial infections",dose:"As directed by physician",stock:8,active:true},
+  {id:3,name:"Vitamin C 1000mg",mfr:"HealthVit",pack:"Bottle of 60 tablets",price:340,mrp:499,rx:false,cat:"Vitamins",q:"vitamins,supplement",lock:31,comp:"Ascorbic Acid 1000mg",uses:"Immunity & antioxidant support",dose:"1 tablet daily",stock:64,active:true},
+  {id:4,name:"Metformin 500mg",mfr:"USV",pack:"Strip of 20 tablets",price:34,mrp:46,rx:true,cat:"Diabetes Care",q:"medicine,pills",lock:41,comp:"Metformin HCl 500mg",uses:"Type-2 diabetes management",dose:"As prescribed, after meals",stock:120,active:true},
+  {id:5,name:"Cetirizine 10mg",mfr:"Dr Reddy's",pack:"Strip of 10 tablets",price:22,mrp:30,rx:false,cat:"Medicines",q:"tablets,medicine",lock:51,comp:"Cetirizine 10mg",uses:"Allergy, runny nose, sneezing",dose:"1 tablet at night",stock:5,active:true},
+  {id:6,name:"Digital Thermometer",mfr:"Omron",pack:"1 unit",price:199,mrp:349,rx:false,cat:"Devices",q:"thermometer,medical",lock:61,comp:"Digital, flexible tip",uses:"Body temperature measurement",dose:"—",stock:37,active:true},
+  {id:7,name:"Multivitamin Daily",mfr:"Revital",pack:"Bottle of 30 tablets",price:279,mrp:399,rx:false,cat:"Vitamins",q:"vitamins,pills",lock:71,comp:"Multivitamins + Minerals",uses:"Daily nutrition & energy",dose:"1 tablet daily",stock:52,active:true},
+  {id:8,name:"Insulin Glargine",mfr:"Sanofi",pack:"1 pen · 3 ml",price:780,mrp:950,rx:true,cat:"Diabetes Care",q:"insulin,injection",lock:81,comp:"Insulin Glargine 100IU/ml",uses:"Long-acting blood sugar control",dose:"As prescribed",stock:0,active:false},
+  {id:9,name:"Cough Syrup 100ml",mfr:"KNM Pharma",pack:"100 ml bottle",price:88,mrp:110,rx:false,cat:"Medicines",q:"syrup,medicine",lock:91,comp:"Dextromethorphan",uses:"Dry cough relief",dose:"10 ml thrice daily",stock:9,active:true},
+  {id:10,name:"Hand Sanitizer 500ml",mfr:"Dettol",pack:"500 ml pump",price:149,mrp:220,rx:false,cat:"Personal Care",q:"sanitizer,hygiene",lock:101,comp:"70% Ethyl Alcohol",uses:"Kills 99.9% germs",dose:"—",stock:88,active:true},
+  {id:11,name:"ORS Orange Sachets",mfr:"Electral",pack:"Pack of 5 sachets",price:40,mrp:55,rx:false,cat:"Wellness",q:"medicine,sachet",lock:111,comp:"Oral Rehydration Salts",uses:"Rehydration, dehydration",dose:"1 sachet in 200ml water",stock:6,active:true},
+  {id:12,name:"BP Monitor Automatic",mfr:"Omron",pack:"1 unit",price:1599,mrp:2499,rx:false,cat:"Devices",q:"blood,pressure,monitor",lock:121,comp:"Digital, arm cuff",uses:"Blood pressure monitoring",dose:"—",stock:14,active:true},
+  {id:13,name:"Omega-3 Fish Oil",mfr:"WOW",pack:"Bottle of 60 softgels",price:449,mrp:699,rx:false,cat:"Vitamins",q:"fish,oil,capsule",lock:131,comp:"Omega-3 (EPA+DHA)",uses:"Heart & brain health",dose:"1–2 softgels daily",stock:41,active:true},
+  {id:14,name:"Pantoprazole 40mg",mfr:"Sun Pharma",pack:"Strip of 15 tablets",price:45,mrp:62,rx:true,cat:"Medicines",q:"tablets,pills",lock:141,comp:"Pantoprazole 40mg",uses:"Acidity, GERD, ulcers",dose:"1 tablet before breakfast",stock:72,active:true},
+  {id:15,name:"Whey Protein 1kg",mfr:"MuscleBlaze",pack:"1 kg jar",price:1299,mrp:1899,rx:false,cat:"Wellness",q:"protein,supplement",lock:151,comp:"Whey Protein Concentrate",uses:"Muscle recovery & fitness",dose:"1 scoop post workout",stock:23,active:true},
+  {id:16,name:"Baby Diapers M (56)",mfr:"Pampers",pack:"Pack of 56",price:599,mrp:799,rx:false,cat:"Personal Care",q:"baby,diapers",lock:161,comp:"Ultra-soft, 12h dry",uses:"Baby care 6–11 kg",dose:"—",stock:7,active:true},
+];
+
+let ORDERS=[
+  {id:'KNM-728104',cust:"Aarav Sharma",phone:"+91 98470 12345",email:"aarav.s@example.com",addr:"24, Lake View Residency, MG Road, Kochi, Kerala – 682016",date:"29 Jun 2026",status:"Shipped",payment:"UPI",items:[{pid:1,qty:2},{pid:5,qty:1}]},
+  {id:'KNM-727980',cust:"Diya Patel",phone:"+91 90000 22456",email:"diya.p@example.com",addr:"7B, Sea Breeze Apts, Bandra West, Mumbai, Maharashtra – 400050",date:"29 Jun 2026",status:"Confirmed",payment:"Card",items:[{pid:3,qty:1},{pid:7,qty:1}]},
+  {id:'KNM-727814',cust:"Vivaan Reddy",phone:"+91 90000 33789",email:"vivaan.r@example.com",addr:"221, Jubilee Hills, Hyderabad, Telangana – 500033",date:"28 Jun 2026",status:"Packed",payment:"COD",items:[{pid:4,qty:2},{pid:14,qty:1}]},
+  {id:'KNM-727655',cust:"Ananya Iyer",phone:"+91 90000 44012",email:"ananya.i@example.com",addr:"5, Besant Nagar, Chennai, Tamil Nadu – 600090",date:"28 Jun 2026",status:"Out for Delivery",payment:"UPI",items:[{pid:13,qty:1}]},
+  {id:'KNM-727512',cust:"Kabir Nair",phone:"+91 90000 55345",email:"kabir.n@example.com",addr:"32, Marine Drive, Kochi, Kerala – 682031",date:"27 Jun 2026",status:"Delivered",payment:"UPI",items:[{pid:10,qty:1},{pid:11,qty:2}]},
+  {id:'KNM-727390',cust:"Saanvi Gupta",phone:"+91 90000 66678",email:"saanvi.g@example.com",addr:"88, Vasant Kunj, New Delhi – 110070",date:"27 Jun 2026",status:"Confirmed",payment:"Card",items:[{pid:12,qty:1}]},
+  {id:'KNM-727201',cust:"Aditya Rao",phone:"+91 90000 77901",email:"aditya.r@example.com",addr:"19, Koregaon Park, Pune, Maharashtra – 411001",date:"26 Jun 2026",status:"Delivered",payment:"UPI",items:[{pid:6,qty:1},{pid:1,qty:1}]},
+  {id:'KNM-727088',cust:"Ishaan Menon",phone:"+91 90000 88234",email:"ishaan.m@example.com",addr:"3, Beach Road, Kozhikode, Kerala – 673032",date:"26 Jun 2026",status:"Cancelled",payment:"COD",items:[{pid:15,qty:1}]},
+];
+
+/* PRESCRIPTIONS — pharmacist queue. status: Review, Quotation Sent, Approved, Rejected, Dispatched */
+let RXORDERS=[
+  {id:'RX-90231',cust:"Aarav Sharma",phone:"+91 98470 12345",addr:"24, Lake View Residency, MG Road, Kochi, Kerala – 682016",file:"prescription_apollo.jpg",date:"29 Jun 2026",status:"Review",note:"Chronic BP meds refill",quote:null,reason:null},
+  {id:'RX-90228',cust:"Meera Krishnan",phone:"+91 90000 11987",addr:"12, Panampilly Nagar, Kochi, Kerala – 682036",file:"prescription_1.jpg",date:"29 Jun 2026",status:"Review",note:"Antibiotic course",quote:null,reason:null},
+  {id:'RX-90224',cust:"Rohan Verma",phone:"+91 90000 22876",addr:"56, Salt Lake Sector V, Kolkata, WB – 700091",file:"scan_prescription.pdf",date:"28 Jun 2026",status:"Quotation Sent",note:"Diabetes + thyroid",quote:1240,reason:null},
+  {id:'RX-90219',cust:"Neha Joshi",phone:"+91 90000 33765",addr:"9, Aundh, Pune, Maharashtra – 411007",file:"prescription_2.jpg",date:"28 Jun 2026",status:"Approved",note:"Insulin refill",quote:1560,reason:null},
+  {id:'RX-90215',cust:"Arjun Menon",phone:"+91 90000 44654",addr:"77, Edappally, Kochi, Kerala – 682024",file:"rx_photo.jpg",date:"27 Jun 2026",status:"Dispatched",note:"Post-surgery meds",quote:890,reason:null},
+  {id:'RX-90210',cust:"Priya Nair",phone:"+91 90000 55543",addr:"4, Kadavanthra, Kochi, Kerala – 682020",file:"prescription_3.jpg",date:"27 Jun 2026",status:"Rejected",note:"Prescription illegible",quote:null,reason:"Prescription image unclear — please re-upload"},
+];
+
+/* PACKAGES — lab / health checkup packages */
+let PACKAGES=[
+  {id:1,name:"Full Body Checkup Advanced",cat:"Full Body",tests:72,price:1499,mrp:3200,fast:true,report:"24 hrs",incl:"CBC, Lipid Profile, Liver & Kidney Function, Thyroid, HbA1c, Vitamin D & B12, Urine Routine"},
+  {id:2,name:"Diabetes Care Panel",cat:"Diabetes",tests:14,price:699,mrp:1400,fast:true,report:"12 hrs",incl:"Fasting Glucose, HbA1c, Postprandial Glucose, Lipid Profile, Kidney Function"},
+  {id:3,name:"Heart Health Screening",cat:"Heart",tests:26,price:1199,mrp:2500,fast:true,report:"24 hrs",incl:"Lipid Profile, ECG, Troponin-I, hs-CRP, Homocysteine, Blood Pressure"},
+  {id:4,name:"Thyroid Complete Profile",cat:"Thyroid",tests:5,price:499,mrp:900,fast:false,report:"12 hrs",incl:"T3, T4, TSH, Anti-TPO, Free T4"},
+  {id:5,name:"Vitamin Deficiency Panel",cat:"Vitamin",tests:9,price:899,mrp:1800,fast:false,report:"24 hrs",incl:"Vitamin D, Vitamin B12, Iron Studies, Folate, Calcium"},
+  {id:6,name:"Women's Wellness Package",cat:"Women",tests:48,price:1799,mrp:3600,fast:true,report:"36 hrs",incl:"CBC, Thyroid, Vitamin D & B12, Iron Studies, PCOD Panel, Pap Smear, Bone Health"},
+];
+const PKG_CATS=['Full Body','Diabetes','Heart','Thyroid','Vitamin','Women'];
+const PKG_ICON={'Full Body':'🩺','Diabetes':'🩸','Heart':'❤️','Thyroid':'🦋','Vitamin':'💊','Women':'🌸'};
+
+/* BOOKINGS — lab home-collection bookings. status: Booked, Assigned, Sample Collected, Testing, Report Ready, Cancelled */
+let BOOKINGS=[
+  {id:'LAB-55021',patient:"Aarav Sharma",phone:"+91 98470 12345",pkgId:1,price:1499,paid:true,report:null,date:"5 Jul 2026",slot:"7-9 AM",agent:null,status:"Booked",addr:"24, Lake View Residency, MG Road, Kochi, Kerala – 682016"},
+  {id:'LAB-55018',patient:"Meera Krishnan",phone:"+91 90000 11987",pkgId:2,price:699,paid:false,report:null,date:"5 Jul 2026",slot:"7-9 AM",agent:"Suresh Kumar",status:"Assigned",addr:"12, Panampilly Nagar, Kochi, Kerala – 682036"},
+  {id:'LAB-55014',patient:"Rohan Verma",phone:"+91 90000 22876",pkgId:4,price:499,paid:true,report:null,date:"4 Jul 2026",slot:"9-11 AM",agent:"Anjali Nair",status:"Sample Collected",addr:"56, MG Road, Kochi, Kerala – 682011"},
+  {id:'LAB-55009',patient:"Neha Joshi",phone:"+91 90000 33765",pkgId:5,price:899,paid:false,report:null,date:"4 Jul 2026",slot:"6-8 AM",agent:"Suresh Kumar",status:"Testing",addr:"9, Kaloor, Kochi, Kerala – 682017"},
+  {id:'LAB-55005',patient:"Arjun Menon",phone:"+91 90000 44654",pkgId:3,price:1199,paid:true,report:"LAB-55005_report.pdf",date:"3 Jul 2026",slot:"7-9 AM",agent:"Ratheesh P",status:"Report Ready",addr:"77, Edappally, Kochi, Kerala – 682024"},
+  {id:'LAB-55001',patient:"Priya Nair",phone:"+91 90000 55543",pkgId:6,price:1799,paid:false,report:"LAB-55001_report.pdf",date:"3 Jul 2026",slot:"8-10 AM",agent:"Anjali Nair",status:"Report Ready",addr:"4, Kadavanthra, Kochi, Kerala – 682020"},
+  {id:'LAB-54997',patient:"Kabir Nair",phone:"+91 90000 55345",pkgId:2,price:699,paid:false,report:null,date:"2 Jul 2026",slot:"9-11 AM",agent:null,status:"Cancelled",addr:"32, Marine Drive, Kochi, Kerala – 682031"},
+];
+const PHLEBOTOMISTS=['Suresh Kumar','Anjali Nair','Ratheesh P','Divya Menon','Firoz K'];
+
+const KPI_REVENUE=318600, KPI_ORDERS=176;
+const WEEK=[54,72,63,88,76,94,68];
+/* ===================== CONFIG END ===================== */
+
+const ORDER_STATUS=['Confirmed','Packed','Shipped','Out for Delivery','Delivered'];
+const RX_STATUS=['Review','Quotation Sent','Approved','Rejected','Dispatched'];
+const BOOK_STATUS=['Booked','Assigned','Sample Collected','Testing','Report Ready','Cancelled'];
+const BOOK_STEPS=['Booked','Assigned','Sample Collected','Testing','Report Ready'];
+
+const $=id=>document.getElementById(id);
+const money=n=>BRAND.cur+Math.round(n).toLocaleString('en-IN');
+const slug=s=>s.toLowerCase().replace(/ /g,'-');
+const P=id=>PRODUCTS.find(p=>p.id===id);
+const G=id=>PACKAGES.find(p=>p.id===id);
+/* Medicine thumbnails: type-accurate emoji on a light category-tinted tile (matches KNM storefront, no web photos) */
+function medEmoji(m){const n=(m.name||'').toLowerCase();
+  if(n.includes('thermometer'))return '🌡️';
+  if(n.includes('bp monitor')||n.includes('blood pressure'))return '🩺';
+  if(n.includes('insulin')||n.includes('injection'))return '💉';
+  if(n.includes('syrup'))return '🧴';
+  if(n.includes('sanitizer'))return '🧼';
+  if(n.includes('ors'))return '🧃';
+  if(n.includes('protein')||n.includes('whey'))return '🥤';
+  if(n.includes('diaper'))return '🧷';
+  if(n.includes('fish oil')||n.includes('omega'))return '🐟';
+  if(m.cat==='Devices')return '🩺';
+  return '💊';}
+function catTint(c){return {'Medicines':'#e8f4fb','Diabetes Care':'#fdecea','Vitamins':'#e7f6ee','Devices':'#eef0fb','Personal Care':'#fef4e6','Wellness':'#eafaf1'}[c]||'#e8f4fb';}
+function medTile(m,fs){return `<div style="width:100%;height:100%;display:grid;place-items:center;font-size:${fs||22}px;background:${catTint(m.cat)}">${medEmoji(m)}</div>`;}
+function stockBadge(st){return st<=0?'<span class="badge out">Out of Stock</span>':st<10?'<span class="badge low">Low · '+st+'</span>':'<span class="badge in">In Stock · '+st+'</span>';}
+function orderTotals(o){let sub=0,mrp=0,count=0;o.items.forEach(i=>{const p=P(i.pid);if(!p)return;sub+=p.price*i.qty;mrp+=p.mrp*i.qty;count+=i.qty;});return{sub,mrp,save:mrp-sub,total:sub,count};}
+function pkgDisc(g){return Math.round((g.mrp-g.price)/g.mrp*100);}
+
+/* ---------- section switching ---------- */
+const TITLES={dashboard:'Dashboard',products:'Products',orders:'Orders',prescriptions:'Prescriptions',packages:'Lab Packages',bookings:'Lab Bookings',inventory:'Inventory'};
+function showSection(sec){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-'+sec).classList.add('active');
+  $('pageTitle').textContent=TITLES[sec]||'';
+  document.querySelectorAll('#sideNav button, #mtabs button').forEach(b=>b.classList.toggle('active',b.dataset.sec===sec));
+  if(sec==='dashboard')renderDashboard();
+  if(sec==='products')renderProducts();
+  if(sec==='orders')renderOrders();
+  if(sec==='prescriptions')renderRxList();
+  if(sec==='packages')renderPackages();
+  if(sec==='bookings')renderBookings();
+  if(sec==='inventory')renderInventory();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#sideNav button, #mtabs button').forEach(b=>b.onclick=()=>showSection(b.dataset.sec));
+
+/* ---------- dashboard ---------- */
+function renderDashboard(){
+  const lowCount=PRODUCTS.filter(p=>p.stock<10).length;
+  const rxPending=RXORDERS.filter(r=>r.status==='Review').length;
+  const recent=ORDERS.slice(0,5);
+  const rxToReview=RXORDERS.filter(r=>r.status==='Review');
+  const payPending=BOOKINGS.filter(b=>!b.paid&&b.status!=='Cancelled');
+  const reportsReady=BOOKINGS.filter(b=>b.report).length;
+  $('view-dashboard').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#e8f4fb">💰</div><span class="k-trend up">+14%</span></div><b>${money(KPI_REVENUE)}</b><small>Total Revenue</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#e7f6ee">🧾</div><span class="k-trend up">+9%</span></div><b>${KPI_ORDERS}</b><small>Total Orders</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#fef3c7">📄</div><span class="k-trend warn">${rxPending}</span></div><b>${rxPending}</b><small>Prescriptions Pending</small></div>
+      <div class="kpi"><div class="k-top"><div class="k-ic" style="background:#fdecea">⚠️</div><span class="k-trend down">${lowCount}</span></div><b>${lowCount}</b><small>Low-Stock Alerts</small></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-h"><h3>Sales — This Week</h3><span class="link">₹ in thousands</span></div>
+      <div class="chart">${WEEK.map((v,i)=>`<div class="bar-wrap"><div class="bar" style="height:${v}%"><span>${v}</span></div><div class="day">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]}</div></div>`).join('')}</div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-h"><h3>Recent Orders</h3><button class="link" onclick="showSection('orders')">View all</button></div>
+        ${recent.map(o=>{const t=orderTotals(o);return `<div class="mini" style="cursor:pointer" onclick="openOrder('${o.id}')"><div class="m-main"><div class="m-name">#${o.id}</div><div class="m-sub">${o.cust}</div></div><div class="m-right">${money(t.total)}<br><span class="st ${slug(o.status)}">${o.status}</span></div></div>`}).join('')}
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>📄 Prescriptions to review</h3><button class="link" onclick="showSection('prescriptions')">Queue</button></div>
+        ${rxToReview.length?rxToReview.map(r=>`<div class="mini" style="cursor:pointer" onclick="openRx('${r.id}')"><div class="m-img">📄</div><div class="m-main"><div class="m-name">${r.cust}</div><div class="m-sub">${r.file} · ${r.date}</div></div><div class="m-right"><span class="st review">Review</span></div></div>`).join(''):'<div class="mini"><div class="m-main"><div class="m-sub">No prescriptions pending review 🎉</div></div></div>'}
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-h"><h3>⚠️ Low Stock Items</h3><button class="link" onclick="showSection('inventory')">Manage</button></div>
+        ${PRODUCTS.filter(p=>p.stock<10).map(p=>`<div class="mini"><div class="m-img">${medTile(p,20)}</div><div class="m-main"><div class="m-name">${p.name}</div><div class="m-sub">${p.cat} · ${p.mfr}</div></div><div class="m-right stock-red">${p.stock===0?'Out of stock':p.stock+' left'}</div></div>`).join('')||'<div class="mini"><div class="m-main"><div class="m-sub">All good — nothing low on stock 🎉</div></div></div>'}
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>💳 Lab Payments Pending</h3><button class="link" onclick="showSection('bookings')">Bookings</button></div>
+        <div class="mini"><div class="m-img">📄</div><div class="m-main"><div class="m-name">${reportsReady} lab report${reportsReady!==1?'s':''} ready</div><div class="m-sub">Uploaded for customers to view</div></div></div>
+        ${payPending.length?payPending.map(b=>`<div class="mini" style="cursor:pointer" onclick="openBooking('${b.id}')"><div class="m-main"><div class="m-name">#${b.id}</div><div class="m-sub">${b.patient} · ${b.date}</div></div><div class="m-right">${money(b.price)}<br><span class="st unpaid">Pending</span></div></div>`).join(''):'<div class="mini"><div class="m-main"><div class="m-sub">All lab bookings paid 🎉</div></div></div>'}
+      </div>
+    </div>`;
+}
+
+/* ---------- products ---------- */
+let pSearch='', pCat='All';
+function renderProducts(){
+  $('view-products').innerHTML=`
+    <div class="toolbar">
+      <div class="search">🔍<input placeholder="Search medicines…" value="${pSearch}" oninput="pSearch=this.value;paintProducts()"></div>
+      <div class="fpills" id="pPills">${['All',...CATEGORIES].map(c=>`<button class="fpill ${pCat===c?'active':''}" onclick="pCat='${c}';renderProducts()">${c}</button>`).join('')}</div>
+      <button class="btn" style="margin-left:auto" onclick="openProd()">＋ Add Product</button>
+    </div>
+    <div id="pList"></div>`;
+  paintProducts();
+}
+function paintProducts(){
+  const q=pSearch.toLowerCase().trim();
+  const list=PRODUCTS.filter(p=>(pCat==='All'||p.cat===pCat)&&(q===''||p.name.toLowerCase().includes(q)||(p.mfr||'').toLowerCase().includes(q)||(p.comp||'').toLowerCase().includes(q)));
+  $('pList').innerHTML=list.length?list.map(p=>`
+    <div class="prow">
+      <div class="p-img">${medTile(p,26)}</div>
+      <div class="p-main">
+        <div class="p-name">${p.name} ${p.rx?'<span class="rx-chip">℞ Rx</span>':''}</div>
+        <div class="p-attr">${p.cat} · ${p.mfr} · ${p.pack}</div>
+        <div class="p-price">${money(p.price)}<s>${money(p.mrp)}</s></div>
+      </div>
+      ${stockBadge(p.stock)}
+      <button class="switch ${p.active?'on':''}" title="Active" onclick="toggleActive(${p.id})"></button>
+      <div class="p-acts">
+        <button class="icon-btn" title="Edit" onclick="openProd(${p.id})">✏️</button>
+        <button class="icon-btn" title="Delete" onclick="delProduct(${p.id})">🗑️</button>
+      </div>
+    </div>`).join(''):'<div class="panel empty-panel">No medicines found</div>';
+}
+function toggleActive(id){const p=P(id);p.active=!p.active;paintProducts();showToast(p.active?'Product activated':'Product hidden');}
+function delProduct(id){const p=P(id);if(!confirm('Delete "'+p.name+'"?'))return;PRODUCTS=PRODUCTS.filter(x=>x.id!==id);paintProducts();showToast('Product deleted');}
+
+/* ---------- product modal ---------- */
+let editingId=null;
+function fillCatSelect(){$('f_cat').innerHTML=CATEGORIES.map(c=>`<option>${c}</option>`).join('');}
+function updatePreview(){
+  const url=$('f_img').value.trim();
+  if(url){$('f_preview').innerHTML=`<img src="${url}" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.parentNode.innerHTML=medTile({name:document.getElementById('f_name').value,cat:document.getElementById('f_cat').value},32)">`;return;}
+  const m={name:$('f_name').value,cat:$('f_cat').value};
+  $('f_preview').innerHTML=medTile(m,32);
+}
+function openProd(id){
+  editingId=id||null; fillCatSelect();
+  const p=id?P(id):null;
+  $('prodModalTitle').textContent=id?'Edit Product':'Add Product';
+  $('f_img').value=p&&p.img?p.img:''; $('f_q').value=p?p.q||'':'';
+  $('f_name').value=p?p.name:''; $('f_cat').value=p?p.cat:CATEGORIES[0];
+  $('f_mfr').value=p?p.mfr||'':''; $('f_pack').value=p?p.pack||'':'';
+  $('f_price').value=p?p.price:''; $('f_mrp').value=p?p.mrp:''; $('f_stock').value=p?p.stock:'';
+  $('f_rx').classList.toggle('on',!!(p&&p.rx));
+  $('f_comp').value=p?p.comp||'':''; $('f_uses').value=p?p.uses||'':'';
+  updatePreview(); $('prodModal').classList.add('open');
+}
+function closeProd(){$('prodModal').classList.remove('open');}
+function saveProduct(){
+  const name=$('f_name').value.trim(); const price=+$('f_price').value; const mrp=+$('f_mrp').value||price;
+  if(!name){showToast('Please enter a medicine name');return;}
+  if(!price){showToast('Please enter a price');return;}
+  const data={
+    name, cat:$('f_cat').value, mfr:$('f_mfr').value.trim(), pack:$('f_pack').value.trim()||'1 unit',
+    price, mrp, stock:+$('f_stock').value||0, rx:$('f_rx').classList.contains('on'),
+    comp:$('f_comp').value.trim(), uses:$('f_uses').value.trim(), dose:'As directed',
+    img:$('f_img').value.trim()||null, q:$('f_q').value.trim()||name.toLowerCase().split(' ').slice(0,2).join(',')
+  };
+  if(editingId){Object.assign(P(editingId),data);showToast('Product updated ✓');}
+  else{const id=Math.max(0,...PRODUCTS.map(p=>p.id))+1;PRODUCTS.push({id,active:true,lock:500+id,...data});showToast('Product added ✓');}
+  closeProd(); renderProducts();
+}
+
+/* ---------- orders ---------- */
+let oFilter='All';
+function renderOrders(){
+  $('view-orders').innerHTML=`
+    <div class="toolbar"><div class="fpills">${['All',...ORDER_STATUS,'Cancelled'].map(s=>`<button class="fpill ${oFilter===s?'active':''}" onclick="oFilter='${s}';renderOrders()">${s}</button>`).join('')}</div></div>
+    <div id="oList"></div>`;
+  const list=ORDERS.filter(o=>oFilter==='All'||o.status===oFilter);
+  $('oList').innerHTML=list.length?list.map(o=>{const t=orderTotals(o);const names=o.items.map(i=>P(i.pid)?P(i.pid).name:'').filter(Boolean).join(', ');
+    return `<div class="orow" onclick="openOrder('${o.id}')" style="cursor:pointer">
+      <div class="o-ficon">${medTile(P(o.items[0].pid),22)}</div>
+      <div class="o-mid"><div class="o-id">#${o.id}</div><div class="o-cust">${o.cust} · ${o.date}</div><div class="o-items">${names}</div></div>
+      <div class="o-total">${money(t.total)}<div style="font-size:11px;color:var(--muted);font-weight:700;font-family:var(--font-body)">${t.count} item${t.count>1?'s':''}</div></div>
+      <span class="st ${slug(o.status)}">${o.status}</span>
+      <button class="btn ghost" onclick="event.stopPropagation();openOrder('${o.id}')">View</button>
+    </div>`}).join(''):'<div class="panel empty-panel">No orders in this status</div>';
+}
+
+/* ---------- order detail ---------- */
+function openOrder(id){
+  const o=ORDERS.find(x=>x.id===id); if(!o)return;
+  const t=orderTotals(o); const cancelled=o.status==='Cancelled';
+  const curIdx=ORDER_STATUS.indexOf(o.status);
+  const timeline=cancelled?`<div class="cancel-banner">✕ This order was cancelled.</div>`:`<div class="tl">${ORDER_STATUS.map((s,i)=>`<div class="step ${i<=curIdx?'done':''} ${i===curIdx?'current':''} ${i===ORDER_STATUS.length-1?'last':''}"><div class="dot">${i<=curIdx?'✓':''}</div><div class="s-info"><b>${s}</b><small>${i===curIdx?'Current status':(i<curIdx?'Completed':'Pending')}</small></div></div>`).join('')}</div>`;
+  $('view-order-detail').innerHTML=`
+    <button class="od-back" onclick="showSection('orders')">← Back to Orders</button>
+    <div class="od-head">
+      <div><h2>Order #${o.id}</h2><div class="od-meta">Placed on ${o.date} · ${t.count} item${t.count>1?'s':''} · Paid via ${o.payment}</div></div>
+      <div class="od-status-row">
+        <span class="st ${slug(o.status)}">${o.status}</span>
+        <select onchange="setOrderStatus('${o.id}',this.value)">${['Confirmed','Packed','Shipped','Out for Delivery','Delivered','Cancelled'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select>
+        <button class="btn acc" onclick="showToast('Invoice sent to printer (demo)')">🖨️ Invoice</button>
+      </div>
+    </div>
+    <div class="od-grid">
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Items</div>
+          ${o.items.map(i=>{const p=P(i.pid);if(!p)return '';return `<div class="od-item">
+            <div class="oi-img">${medTile(p,26)}</div>
+            <div class="oi-main"><div class="oi-name">${p.name} ${p.rx?'<span class="rx-chip">℞ Rx</span>':''}</div><div class="oi-attr">${p.mfr} · ${p.pack} · Qty: ${i.qty}</div></div>
+            <div class="oi-price">${money(p.price*i.qty)}<small>${money(p.price)} each</small></div>
+          </div>`}).join('')}
+        </div>
+        <div class="panel">
+          <div class="card-title">Order Timeline</div>
+          ${timeline}
+        </div>
+      </div>
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Payment Summary</div>
+          <div class="sum-line"><span>Item Total (MRP)</span><span>${money(t.mrp)}</span></div>
+          <div class="sum-line"><span>Discount</span><span style="color:var(--green);font-weight:800">− ${money(t.save)}</span></div>
+          <div class="sum-line"><span>Delivery</span><span class="free">FREE</span></div>
+          <div class="sum-line tot"><span>Grand Total</span><span>${money(t.total)}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Customer</div>
+          <div class="info-line"><span class="il-ic">👤</span><div><b>${o.cust}</b></div></div>
+          <div class="info-line"><span class="il-ic">📞</span><span>${o.phone}</span></div>
+          <div class="info-line"><span class="il-ic">✉️</span><span>${o.email}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Shipping Address</div>
+          <div class="info-line"><span class="il-ic">📍</span><span>${o.addr}</span></div>
+          <div class="info-line"><span class="il-ic">💳</span><span>Payment: ${o.payment}</span></div>
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-order-detail').classList.add('active');
+  $('pageTitle').textContent='Order Detail';
+  window.scrollTo(0,0);
+}
+function setOrderStatus(id,val){const o=ORDERS.find(x=>x.id===id);o.status=val;openOrder(id);showToast('Status updated to '+val);}
+
+/* ---------- prescriptions ---------- */
+let rxFilter='All';
+function renderRxList(){
+  $('view-prescriptions').innerHTML=`
+    <div class="toolbar"><div class="fpills">${['All',...RX_STATUS].map(s=>`<button class="fpill ${rxFilter===s?'active':''}" onclick="rxFilter='${s}';renderRxList()">${s}</button>`).join('')}</div></div>
+    <div id="rxList"></div>`;
+  const list=RXORDERS.filter(r=>rxFilter==='All'||r.status===rxFilter);
+  $('rxList').innerHTML=list.length?list.map(r=>`
+    <div class="orow" onclick="openRx('${r.id}')" style="cursor:pointer">
+      <div class="o-ficon">📄</div>
+      <div class="o-mid"><div class="o-id">℞ #${r.id}</div><div class="o-cust">${r.cust} · ${r.date}</div><div class="o-items">${r.file} · ${r.note}</div></div>
+      ${r.quote?`<div class="o-total">${money(r.quote)}<div style="font-size:11px;color:var(--muted);font-weight:700;font-family:var(--font-body)">quoted</div></div>`:''}
+      <span class="st ${slug(r.status)}">${r.status}</span>
+      <button class="btn ghost" onclick="event.stopPropagation();openRx('${r.id}')">Review</button>
+    </div>`).join(''):'<div class="panel empty-panel">No prescriptions in this status</div>';
+}
+
+/* ---------- prescription detail ---------- */
+function openRx(id){
+  const r=RXORDERS.find(x=>x.id===id); if(!r)return;
+  const isImg=!r.file.endsWith('.pdf');
+  $('view-rx-detail').innerHTML=`
+    <button class="od-back" onclick="showSection('prescriptions')">← Back to Prescriptions</button>
+    <div class="od-head">
+      <div><h2>Prescription ℞ #${r.id}</h2><div class="od-meta">Uploaded on ${r.date} · ${r.note}</div></div>
+      <div class="od-status-row">
+        <span class="st ${slug(r.status)}">${r.status}</span>
+        <select onchange="setRxStatus('${r.id}',this.value)">${RX_STATUS.map(s=>`<option ${s===r.status?'selected':''}>${s}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="od-grid">
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Prescription Preview</div>
+          <div class="rx-preview">
+            <div class="rp-ic">${isImg?'🖼️':'📄'}</div>
+            <b>${r.file}</b>
+            <small>${isImg?'Scanned prescription image':'Prescription PDF document'} · uploaded ${r.date}</small>
+          </div>
+          ${r.status==='Rejected'&&r.reason?`<div class="reject-banner">✕ Rejected: ${r.reason}</div>`:''}
+          ${r.quote?`<div style="background:#e7f6ee;border:1px solid #bfe6cf;border-radius:12px;padding:12px 14px;font-weight:700;font-size:13.5px;color:#15803d;margin-top:${r.status==='Rejected'?'10px':'0'}">💰 Quotation sent to customer: ${money(r.quote)}</div>`:''}
+        </div>
+        <div class="panel">
+          <div class="card-title">Pharmacist Actions</div>
+          <div class="rx-actions">
+            <button class="btn acc" onclick="rxApprove('${r.id}')">✓ Approve</button>
+            <button class="btn" onclick="rxQuote('${r.id}')">💰 Send Quotation</button>
+            <button class="btn danger" onclick="rxReject('${r.id}')">✕ Reject</button>
+          </div>
+          <div class="hint" style="margin-top:12px">Approve after verifying medicines & dosage. Send a quotation with the total amount before confirming an Rx order. Reject if the prescription is invalid or unclear.</div>
+        </div>
+      </div>
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Customer</div>
+          <div class="info-line"><span class="il-ic">👤</span><div><b>${r.cust}</b></div></div>
+          <div class="info-line"><span class="il-ic">📞</span><span>${r.phone}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Delivery Address</div>
+          <div class="info-line"><span class="il-ic">📍</span><span>${r.addr}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Notes</div>
+          <div class="info-line"><span class="il-ic">📝</span><span>${r.note}</span></div>
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-rx-detail').classList.add('active');
+  $('pageTitle').textContent='Prescription Detail';
+  window.scrollTo(0,0);
+}
+function setRxStatus(id,val){const r=RXORDERS.find(x=>x.id===id);r.status=val;openRx(id);showToast('Status updated to '+val);}
+function rxApprove(id){const r=RXORDERS.find(x=>x.id===id);r.status='Approved';r.reason=null;openRx(id);showToast('Prescription approved ✓');}
+function rxReject(id){const r=RXORDERS.find(x=>x.id===id);const reason=prompt('Reason for rejection:','Prescription image unclear — please re-upload');if(reason===null)return;r.status='Rejected';r.reason=reason.trim()||'Rejected by pharmacist';openRx(id);showToast('Prescription rejected');}
+function rxQuote(id){const r=RXORDERS.find(x=>x.id===id);const amt=prompt('Enter quotation amount (₹):',r.quote||'');if(amt===null)return;const n=parseInt(amt,10);if(!n||n<=0){showToast('Enter a valid amount');return;}r.quote=n;r.status='Quotation Sent';openRx(id);showToast('Quotation of '+money(n)+' sent');}
+
+/* ---------- packages ---------- */
+function renderPackages(){
+  $('view-packages').innerHTML=`
+    <div class="toolbar">
+      <div style="font-weight:700;color:var(--muted);font-size:13.5px">${PACKAGES.length} lab & health checkup packages</div>
+      <button class="btn" style="margin-left:auto" onclick="openPkg()">＋ Add Package</button>
+    </div>
+    <div id="gList"></div>`;
+  paintPackages();
+}
+function paintPackages(){
+  $('gList').innerHTML=PACKAGES.length?PACKAGES.map(g=>`
+    <div class="prow">
+      <div class="pkg-icon">${PKG_ICON[g.cat]||'🧪'}</div>
+      <div class="p-main">
+        <div class="p-name">${g.name} <span class="tag">${g.cat}</span></div>
+        <div class="p-attr">🧫 ${g.tests} tests · ⏱️ Report in ${g.report} · <span class="${g.fast?'':''}">${g.fast?'⚠️ Fasting required':'✅ No fasting'}</span></div>
+        <div class="p-price">${money(g.price)}<s>${money(g.mrp)}</s> <span style="color:var(--green);font-size:12px;font-weight:800">${pkgDisc(g)}% OFF</span></div>
+      </div>
+      <div class="p-acts">
+        <button class="icon-btn" title="Edit" onclick="openPkg(${g.id})">✏️</button>
+        <button class="icon-btn" title="Delete" onclick="delPackage(${g.id})">🗑️</button>
+      </div>
+    </div>`).join(''):'<div class="panel empty-panel">No packages yet</div>';
+}
+function delPackage(id){const g=G(id);if(!confirm('Delete "'+g.name+'"?'))return;PACKAGES=PACKAGES.filter(x=>x.id!==id);paintPackages();showToast('Package deleted');}
+
+let editingPkgId=null;
+function fillPkgCatSelect(){$('g_cat').innerHTML=PKG_CATS.map(c=>`<option>${c}</option>`).join('');}
+function openPkg(id){
+  editingPkgId=id||null; fillPkgCatSelect();
+  const g=id?G(id):null;
+  $('pkgModalTitle').textContent=id?'Edit Package':'Add Package';
+  $('g_name').value=g?g.name:''; $('g_cat').value=g?g.cat:PKG_CATS[0];
+  $('g_tests').value=g?g.tests:''; $('g_price').value=g?g.price:''; $('g_mrp').value=g?g.mrp:'';
+  $('g_report').value=g?g.report:''; $('g_fast').classList.toggle('on',!!(g&&g.fast));
+  $('g_incl').value=g?g.incl||'':'';
+  $('pkgModal').classList.add('open');
+}
+function closePkg(){$('pkgModal').classList.remove('open');}
+function savePackage(){
+  const name=$('g_name').value.trim(); const price=+$('g_price').value; const mrp=+$('g_mrp').value||price;
+  if(!name){showToast('Please enter a package name');return;}
+  if(!price){showToast('Please enter a price');return;}
+  const data={name,cat:$('g_cat').value,tests:+$('g_tests').value||0,price,mrp,report:$('g_report').value.trim()||'24 hrs',fast:$('g_fast').classList.contains('on'),incl:$('g_incl').value.trim()};
+  if(editingPkgId){Object.assign(G(editingPkgId),data);showToast('Package updated ✓');}
+  else{const id=Math.max(0,...PACKAGES.map(p=>p.id))+1;PACKAGES.push({id,...data});showToast('Package added ✓');}
+  closePkg(); renderPackages();
+}
+
+/* ---------- bookings ---------- */
+let bFilter='All';
+function renderBookings(){
+  $('view-bookings').innerHTML=`
+    <div class="toolbar"><div class="fpills">${['All',...BOOK_STATUS].map(s=>`<button class="fpill ${bFilter===s?'active':''}" onclick="bFilter='${s}';renderBookings()">${s}</button>`).join('')}</div></div>
+    <div id="bList"></div>`;
+  const list=BOOKINGS.filter(b=>bFilter==='All'||b.status===bFilter);
+  $('bList').innerHTML=list.length?list.map(b=>{const g=G(b.pkgId);
+    return `<div class="orow" onclick="openBooking('${b.id}')" style="cursor:pointer">
+      <div class="o-ficon">${PKG_ICON[g?g.cat:'']||'🧪'}</div>
+      <div class="o-mid"><div class="o-id">#${b.id}</div><div class="o-cust">${b.patient} · ${b.date} · ${b.slot}</div><div class="o-items">${g?g.name:'Package'} · ${b.agent?'👤 '+b.agent:'⚠️ Unassigned'}${b.report?' · 📄 report ready':''}</div></div>
+      <span class="st ${b.paid?'paid':'unpaid'}">${b.paid?'Paid':'Payment Pending'}</span>
+      <span class="st ${slug(b.status)}">${b.status}</span>
+      <button class="btn ghost" onclick="event.stopPropagation();openBooking('${b.id}')">View</button>
+    </div>`}).join(''):'<div class="panel empty-panel">No bookings in this status</div>';
+}
+
+/* ---------- booking detail ---------- */
+function openBooking(id){
+  const b=BOOKINGS.find(x=>x.id===id); if(!b)return;
+  const g=G(b.pkgId); const cancelled=b.status==='Cancelled';
+  const curIdx=BOOK_STEPS.indexOf(b.status);
+  const timeline=cancelled?`<div class="cancel-banner">✕ This booking was cancelled.</div>`:`<div class="tl">${BOOK_STEPS.map((s,i)=>`<div class="step ${i<=curIdx?'done':''} ${i===curIdx?'current':''} ${i===BOOK_STEPS.length-1?'last':''}"><div class="dot">${i<=curIdx?'✓':''}</div><div class="s-info"><b>${s}</b><small>${i===curIdx?'Current status':(i<curIdx?'Completed':'Pending')}</small></div></div>`).join('')}</div>`;
+  $('view-booking-detail').innerHTML=`
+    <button class="od-back" onclick="showSection('bookings')">← Back to Bookings</button>
+    <div class="od-head">
+      <div><h2>Booking #${b.id}</h2><div class="od-meta">${b.date} · ${b.slot} · ${b.agent?'Phlebotomist: '+b.agent:'No phlebotomist assigned'}</div></div>
+      <div class="od-status-row">
+        <span class="st ${b.paid?'paid':'unpaid'}">${b.paid?'Paid':'Payment Pending'}</span>
+        <span class="st ${slug(b.status)}">${b.status}</span>
+        <select onchange="setBookStatus('${b.id}',this.value)">${BOOK_STATUS.map(s=>`<option ${s===b.status?'selected':''}>${s}</option>`).join('')}</select>
+        <button class="btn" onclick="assignAgent('${b.id}')">👤 Assign Phlebotomist</button>
+      </div>
+    </div>
+    <div class="od-grid">
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Package</div>
+          <div class="od-item">
+            <div class="oi-img">${PKG_ICON[g?g.cat:'']||'🧪'}</div>
+            <div class="oi-main"><div class="oi-name">${g?g.name:'Package'}</div><div class="oi-attr">${g?g.tests+' tests · '+(g.fast?'Fasting required':'No fasting')+' · Report in '+g.report:''}</div></div>
+            <div class="oi-price">${money(b.price)}</div>
+          </div>
+          ${g&&g.incl?`<div class="info-line"><span class="il-ic">🧫</span><span>Includes: ${g.incl}</span></div>`:''}
+        </div>
+        <div class="panel">
+          <div class="card-title">Lab Report</div>
+          ${b.report?`
+            <div class="file-chip"><div class="fc-ic">📄</div><div><b>${b.report}</b><small>✓ Uploaded · customer can ${b.paid?'view in-app':'view once paid'}</small></div><button class="fc-act" onclick="uploadReport('${b.id}')">Replace</button></div>
+            ${!b.paid?`<div class="reject-banner" style="background:#fef3c7;color:#b45309;margin-top:10px">🔒 Report is locked for the customer until payment is completed.</div>`:''}
+          `:`
+            <div class="hint" style="margin-bottom:10px">Upload the lab report (PDF) so the customer can view their results in-app without visiting the lab.</div>
+            <button class="btn" onclick="uploadReport('${b.id}')">📄 Upload Report (PDF)</button>
+          `}
+        </div>
+        <div class="panel">
+          <div class="card-title">Collection Timeline</div>
+          ${timeline}
+        </div>
+      </div>
+      <div class="stk-col">
+        <div class="panel">
+          <div class="card-title">Payment</div>
+          <div class="sum-line"><span>Package Amount</span><span>${money(b.price)}</span></div>
+          <div class="sum-line"><span>Status</span><span class="${b.paid?'':''}" style="font-weight:800;color:${b.paid?'var(--green)':'var(--amber)'}">${b.paid?'Paid ✓':'Payment Pending'}</span></div>
+          ${!b.paid?`<div style="margin-top:10px"><button class="btn acc block" onclick="markPaid('${b.id}')">💳 Mark as Paid</button></div>`:''}
+        </div>
+        <div class="panel">
+          <div class="card-title">Patient</div>
+          <div class="info-line"><span class="il-ic">👤</span><div><b>${b.patient}</b></div></div>
+          <div class="info-line"><span class="il-ic">📞</span><span>${b.phone}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Collection Details</div>
+          <div class="info-line"><span class="il-ic">📅</span><span>${b.date}</span></div>
+          <div class="info-line"><span class="il-ic">⏰</span><span>${b.slot}</span></div>
+          <div class="info-line"><span class="il-ic">🧑‍🔬</span><span>${b.agent||'Not assigned yet'}</span></div>
+        </div>
+        <div class="panel">
+          <div class="card-title">Home Collection Address</div>
+          <div class="info-line"><span class="il-ic">📍</span><span>${b.addr}</span></div>
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-booking-detail').classList.add('active');
+  $('pageTitle').textContent='Booking Detail';
+  window.scrollTo(0,0);
+}
+function setBookStatus(id,val){const b=BOOKINGS.find(x=>x.id===id);b.status=val;openBooking(id);showToast('Status updated to '+val);}
+function assignAgent(id){
+  const b=BOOKINGS.find(x=>x.id===id);
+  const list=PHLEBOTOMISTS.map((n,i)=>(i+1)+'. '+n).join('\n');
+  const pick=prompt('Assign a phlebotomist (enter number 1-'+PHLEBOTOMISTS.length+'):\n'+list, '1');
+  if(pick===null)return;
+  const idx=parseInt(pick,10)-1;
+  if(isNaN(idx)||idx<0||idx>=PHLEBOTOMISTS.length){showToast('Invalid selection');return;}
+  b.agent=PHLEBOTOMISTS[idx];
+  if(b.status==='Booked')b.status='Assigned';
+  openBooking(id);showToast('Assigned to '+b.agent);
+}
+function uploadReport(id){
+  const b=BOOKINGS.find(x=>x.id===id);
+  const suggested=b.report||(b.id+'_report.pdf');
+  const name=prompt('Enter lab report filename (PDF):',suggested);
+  if(name===null)return;
+  let fn=name.trim();if(!fn){showToast('Enter a valid filename');return;}
+  if(!fn.toLowerCase().endsWith('.pdf'))fn+='.pdf';
+  const isReplace=!!b.report;
+  b.report=fn;
+  if(b.status!=='Cancelled')b.status='Report Ready';
+  openBooking(id);showToast(isReplace?'Report replaced ✓':'Report uploaded ✓ · customer notified');
+}
+function markPaid(id){const b=BOOKINGS.find(x=>x.id===id);b.paid=true;openBooking(id);showToast('Payment marked as received ✓');}
+
+/* ---------- inventory ---------- */
+function renderInventory(){
+  const inC=PRODUCTS.filter(p=>p.stock>=10).length, lowC=PRODUCTS.filter(p=>p.stock>0&&p.stock<10).length, outC=PRODUCTS.filter(p=>p.stock===0).length;
+  $('view-inventory').innerHTML=`
+    <div class="inv-summary">
+      <div class="inv-chip in"><b>${inC}</b><small>In Stock</small></div>
+      <div class="inv-chip low"><b>${lowC}</b><small>Low Stock</small></div>
+      <div class="inv-chip out"><b>${outC}</b><small>Out of Stock</small></div>
+    </div>
+    <div id="invList"></div>`;
+  paintInventory();
+}
+function paintInventory(){
+  $('invList').innerHTML=PRODUCTS.map(p=>`
+    <div class="prow" style="${p.stock===0?'border-color:#fecaca':p.stock<10?'border-color:#fde68a':''}">
+      <div class="p-img">${medTile(p,26)}</div>
+      <div class="p-main"><div class="p-name">${p.name} ${p.rx?'<span class="rx-chip">℞ Rx</span>':''}</div><div class="p-attr">${p.cat} · ${p.mfr} · ${p.pack}</div></div>
+      ${stockBadge(p.stock)}
+      <div class="stepper-mini"><button onclick="adjStock(${p.id},-1)">−</button><b style="${p.stock===0?'color:var(--red)':p.stock<10?'color:var(--amber)':'color:var(--green)'}">${p.stock}</b><button onclick="adjStock(${p.id},1)">＋</button></div>
+      <button class="btn ghost" onclick="adjStock(${p.id},25)">Restock +25</button>
+    </div>`).join('');
+}
+function adjStock(id,d){const p=P(id);p.stock=Math.max(0,p.stock+d);renderInventory();}
+
+let toastT;function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1700);}
+
+/* init */
+document.title=BRAND.name+' · Admin';
+showSection('dashboard');
+</script>
+</body>
+</html>
