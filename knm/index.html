@@ -56,15 +56,19 @@
   .subhead .sh-ic{font-size:20px;background:none;border:none;position:relative}
   .subhead .sh-ic .badge{position:absolute;top:-6px;right:-8px;background:var(--blue);color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:999px;display:grid;place-items:center;padding:0 4px}
 
-  /* quick action cards */
-  .quick{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
-  .qcard{border-radius:16px;padding:16px;color:#fff;position:relative;overflow:hidden;min-height:104px;display:flex;flex-direction:column;justify-content:center}
-  .qcard b{font-size:16px;font-weight:800;max-width:75%}
-  .qcard small{font-weight:600;font-size:12px;opacity:.95;max-width:78%;margin-top:2px}
-  .qcard .qe{position:absolute;right:10px;bottom:8px;font-size:44px;opacity:.9}
-  .qcard .go{background:#fff;align-self:flex-start;font-weight:800;font-size:11.5px;padding:5px 12px;border-radius:999px;margin-top:8px;border:none}
-  .q1{background:linear-gradient(135deg,var(--blue),var(--blue-d))} .q1 .go{color:var(--blue-d)}
-  .q2{background:linear-gradient(135deg,#2bb673,#159a5b)} .q2 .go{color:#159a5b}
+  /* home services grid */
+  .services{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 12px 6px}
+  .svc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:var(--shadow)}
+  .svc:active{transform:scale(.97)}
+  .svc-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;margin-bottom:5px}
+  .svc b{font-size:12px;font-weight:700} .svc small{font-size:9.5px;color:var(--muted);font-weight:600;text-align:center}
+  .uploadcard{display:flex;align-items:center;gap:12px;width:calc(100% - 24px);margin:8px 12px 6px;background:linear-gradient(120deg,var(--blue),var(--blue-d));color:#fff;border:none;border-radius:16px;padding:14px 16px;text-align:left;box-shadow:var(--shadow)}
+  .uploadcard .uc-ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+  .uploadcard .uc-txt{flex:1} .uploadcard .uc-txt b{font-size:14.5px;font-weight:800;display:block} .uploadcard .uc-txt small{font-size:11.5px;opacity:.95;font-weight:500}
+  .uploadcard .uc-cta{background:#fff;color:var(--blue-d);font-weight:800;font-size:12px;padding:7px 14px;border-radius:999px;flex:0 0 auto}
+  .trust{display:flex;justify-content:space-between;gap:4px;margin:8px 12px 2px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 6px}
+  .trust>div{flex:1;text-align:center;border-right:1px solid var(--line)} .trust>div:last-child{border:none}
+  .trust b{font-size:11.5px;font-weight:800;display:block;color:var(--blue-d)} .trust small{font-size:9.5px;color:var(--muted);font-weight:600}
 
   /* category strip */
   .cat-strip{display:flex;gap:14px;overflow-x:auto;padding:6px 14px 8px;scrollbar-width:none}
@@ -107,13 +111,16 @@
   .card .rxtag{position:absolute;top:8px;left:8px;background:var(--rx-l);color:var(--rx);font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;z-index:2}
   .card .offtag{position:absolute;top:8px;right:8px;background:var(--green);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;z-index:2}
   .c-info{padding:10px 11px 12px;display:flex;flex-direction:column;flex:1}
-  .c-name{font-weight:700;font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
+  .c-name{font-weight:700;font-size:13.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
   .c-mfr{color:var(--muted);font-weight:600;font-size:11.5px;margin-top:2px}
   .c-pack{color:var(--muted);font-weight:600;font-size:11px;margin-top:2px}
   .c-price{display:flex;align-items:baseline;gap:6px;margin-top:6px;flex-wrap:wrap}
   .c-price .now{font-size:16px;font-weight:800} .c-price .was{font-size:12px;color:var(--muted);text-decoration:line-through}
   .c-add{margin-top:8px;border:1.5px solid var(--blue);color:var(--blue);background:#fff;font-weight:800;font-size:13px;padding:8px;border-radius:10px}
   .c-add.added{background:var(--blue);color:#fff}
+  .c-step{margin-top:8px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--blue);border-radius:10px;overflow:hidden}
+  .c-step button{width:38px;height:34px;border:none;background:var(--blue);color:#fff;font-weight:800;font-size:17px;line-height:1}
+  .c-step span{font-weight:800;font-size:12px;color:var(--blue-d)}
 
   /* product detail */
   .pd-media{background:#fff;padding:14px;display:flex;justify-content:center}
@@ -221,7 +228,7 @@
   .lc-st.prog{background:var(--blue-l);color:var(--blue-d)} .lc-st.done{background:var(--green-l);color:var(--green)} .lc-st.rev{background:#fef3c7;color:#b45309} .lc-st.pause{background:#f1f0f4;color:#6b7280}
   .lc-body{display:flex;gap:12px;align-items:center}
   .od-img{width:48px;height:48px;border-radius:10px;overflow:hidden;background:var(--blue-l);flex:0 0 auto}
-  .lc-items{font-weight:700;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .lc-items{font-weight:700;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .lc-meta{color:var(--muted);font-weight:600;font-size:12px;margin-top:3px} .lc-total{font-weight:800;font-size:15px;margin-top:2px}
   .lc-acts{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;display:flex;gap:8px;flex-wrap:wrap}
   .lc-acts button{background:none;border:1.5px solid var(--line);color:var(--ink);font-weight:800;font-size:12.5px;padding:7px 12px;border-radius:9px}
@@ -359,9 +366,24 @@
 
   <!-- HOME -->
   <main id="screen-home" class="screen active">
-    <div class="quick">
-      <div class="qcard q1"><b>Upload Prescription</b><small>Order Rx medicines in a tap</small><button class="go" onclick="go('screen-rx')">Upload Now</button><span class="qe">📄</span></div>
-      <div class="qcard q2"><b>Subscribe & Save</b><small>Never run out of regulars</small><button class="go" onclick="go('screen-subs')">Manage</button><span class="qe">🔁</span></div>
+    <div class="services">
+      <button class="svc" onclick="filterTo('Medicines')"><div class="svc-ic" style="background:#e8f4fb">💊</div><b>Medicines</b><small>Up to 25% off</small></button>
+      <button class="svc" onclick="go('screen-packages')"><div class="svc-ic" style="background:#e7f6ee">🧪</div><b>Lab Tests</b><small>Home sample</small></button>
+      <button class="svc" onclick="showToast('Doctor consult — coming soon')"><div class="svc-ic" style="background:#eef0fb">🩺</div><b>Doctor</b><small>Consult 24×7</small></button>
+      <button class="svc" onclick="filterTo('Wellness')"><div class="svc-ic" style="background:#fef4e6">🌿</div><b>Wellness</b><small>Health store</small></button>
+    </div>
+
+    <button class="uploadcard" onclick="go('screen-rx')">
+      <div class="uc-ic">📄</div>
+      <div class="uc-txt"><b>Order with Prescription</b><small>Upload your Rx — pharmacist verifies &amp; delivers</small></div>
+      <span class="uc-cta">Upload →</span>
+    </button>
+
+    <div class="trust">
+      <div><b>🚚 2-hr</b><small>Delivery</small></div>
+      <div><b>✅ 100%</b><small>Genuine</small></div>
+      <div><b>💊 Licensed</b><small>Pharmacy</small></div>
+      <div><b>🔒 Secure</b><small>Payments</small></div>
     </div>
 
     <div class="cat-strip" id="catStrip"></div>
@@ -637,7 +659,7 @@ $('catGrid').innerHTML=CATS.map(c=>`<div class="card" onclick="filterTo('${c.f}'
 $('reorder').innerHTML=meds.filter(m=>m.reg).map(m=>`<div class="re-card"><div class="rt" onclick="openMed(${m.id})">${imgTag(m,'re'+m.id,200)}</div><div class="rn" onclick="openMed(${m.id})">${m.name}</div><div class="rp">${money(m.price)}</div><button class="re-add" onclick="quickAdd(${m.id})">+ Add</button></div>`).join('');
 
 /* grid */
-function visible(){return meds.filter(m=>(currentFilter==='All'||m.cat===currentFilter)&&(searchQ===''||m.name.toLowerCase().includes(searchQ)||m.comp.toLowerCase().includes(searchQ)||m.uses.toLowerCase().includes(searchQ)));}
+function visible(){const q=searchQ;return meds.filter(m=>{const inCat=currentFilter==='All'||m.cat===currentFilter;const match=m.name.toLowerCase().includes(q)||m.comp.toLowerCase().includes(q)||m.uses.toLowerCase().includes(q)||m.mfr.toLowerCase().includes(q);return q?match:inCat;});}
 function card(m){const inCart=cart[m.id];return `<div class="card">
   <div class="thumb" onclick="openMed(${m.id})">
     ${m.rx?'<span class="rxtag">℞ Rx</span>':''}
@@ -649,7 +671,7 @@ function card(m){const inCart=cart[m.id];return `<div class="card">
     <div class="c-mfr">${m.mfr}</div>
     <div class="c-pack">${m.pack}</div>
     <div class="c-price"><span class="now">${money(m.price)}</span><span class="was">${money(m.mrp)}</span></div>
-    <button class="c-add ${inCart?'added':''}" onclick="quickAdd(${m.id})">${inCart?'✓ Added · '+cart[m.id].qty:'+ Add'}</button>
+    ${inCart?`<div class="c-step"><button onclick="event.stopPropagation();changeQty(${m.id},-1)">−</button><span>${cart[m.id].qty} in cart</span><button onclick="event.stopPropagation();changeQty(${m.id},1)">+</button></div>`:`<button class="c-add" onclick="quickAdd(${m.id})">+ ADD</button>`}
   </div></div>`;}
 function renderGrid(){const list=visible();$('grid').innerHTML=list.length?list.map(card).join(''):`<div style="grid-column:1/-1" class="empty"><span class="e">🔍</span>No medicines found</div>`;}
 function filterTo(f){if(f==='__pkg__'){go('screen-packages');return;}currentFilter=f;searchQ='';$('sInput').value='';document.querySelectorAll('.chip[data-f]').forEach(c=>c.classList.toggle('active',c.dataset.f===f));renderGrid();go('screen-home');$('toolbar')?.scrollIntoView({behavior:'smooth',block:'start'});}
@@ -689,16 +711,19 @@ function openMed(id){
     <div class="blockt">Similar medicines</div>
     <div class="reorder" style="padding-left:0;padding-right:0">${meds.filter(x=>x.cat===m.cat&&x.id!==m.id).slice(0,6).map(x=>`<div class="re-card"><div class="rt" onclick="openMed(${x.id})">${imgTag(x,'sim'+x.id,200)}</div><div class="rn" onclick="openMed(${x.id})">${x.name}</div><div class="rp">${money(x.price)}</div><button class="re-add" onclick="quickAdd(${x.id})">+ Add</button></div>`).join('')}</div>`;
   renderPdDates();
-  $('pdBar').innerHTML=`<div class="price-min"><b>${money(m.price)}</b><small>${m.mrp>m.price?disc(m)+'% off':''}</small></div><button class="alt" onclick="addMode(${m.id})">Add to Cart</button><button onclick="addMode(${m.id});go('screen-cart')">Buy Now</button>`;
+  renderPdBar();
   go('screen-product');
 }
-function setMode(mode){pdMode=mode;$('opt-once').classList.toggle('sel',mode==='once');$('opt-sub').classList.toggle('sel',mode==='sub');$('subcfg').style.display=mode==='sub'?'flex':'none';
-  const m=currentPD;const price=mode==='sub'?Math.round(m.price*0.9):m.price;$('pdBar').querySelector('.price-min b').textContent=money(price);}
+function renderPdBar(){const m=currentPD;const price=pdMode==='sub'?Math.round(m.price*0.9):m.price;
+  $('pdBar').innerHTML=pdMode==='sub'
+    ? `<div class="price-min"><b>${money(price)}</b><small>per delivery · 10% off</small></div><button onclick="addMode(${m.id})">🔁 Subscribe Now</button>`
+    : `<div class="price-min"><b>${money(price)}</b><small>${disc(m)}% off</small></div><button class="alt" onclick="addMode(${m.id})">Add to Cart</button><button onclick="addMode(${m.id});go('screen-cart')">Buy Now</button>`;}
+function setMode(mode){pdMode=mode;$('opt-once').classList.toggle('sel',mode==='once');$('opt-sub').classList.toggle('sel',mode==='sub');$('subcfg').style.display=mode==='sub'?'flex':'none';renderPdBar();}
 function setFreq(f){pdFreq=f;document.querySelectorAll('#subcfg .segbtn').forEach(b=>b.classList.toggle('sel',b.textContent===f));}
 function renderPdDates(){$('pdDates').innerHTML=[2,3,4,5,7,10].map(d=>{const iso=isoIn(d);const s=fmtShort(iso);return `<button class="dchip ${iso===pdDate?'sel':''}" onclick="event.stopPropagation();pdDate='${iso}';renderPdDates()"><b>${s.dm.split(' ')[0]}</b><small>${s.dow}</small></button>`;}).join('');}
 function addMode(id){
   const m=M(id);
-  if(pdMode==='sub'){subs.unshift({id:'S-'+(4400+subs.length+Math.floor(cartCount())),pid:id,qty:1,freq:pdFreq,next:pdDate,active:true});updateBadges();showToast('Subscription added · first delivery '+fmtDate(pdDate));renderSubs();}
+  if(pdMode==='sub'){subs.unshift({id:'S-'+(4400+subs.length+Math.floor(cartCount())),pid:id,qty:1,freq:pdFreq,next:pdDate,active:true});updateBadges();showToast('Subscription added · first delivery '+fmtDate(pdDate));go('screen-subs');}
   else{addToCart(id);}
 }
 function addMode2(){}
@@ -911,6 +936,14 @@ function openPackage(id){const p=PACKAGES.find(x=>x.id===id);curPkg=p;
   $('pkgDetailContent').innerHTML=`<div class="pad">
     <div class="pkg-card" style="margin:0"><div class="pkg-top"><div class="pkg-ic" style="width:56px;height:56px;font-size:28px">${p.icon}</div><div style="flex:1"><div class="pkg-name" style="font-size:17px">${p.name}</div><div class="pkg-meta">${p.tests} tests included</div><div class="pkg-tags"><span>🏠 Home sample collection</span><span>📄 Report ${p.report}</span>${p.fasting?'<span>🍽️ 10–12 hrs fasting</span>':'<span>No fasting needed</span>'}</div></div></div>
     <div class="pkg-bottom"><div class="pkg-price"><b style="font-size:24px">${money(p.price)}</b><s>${money(p.mrp)}</s></div><span style="color:var(--green);font-weight:800">${pkgDisc(p)}% OFF</span></div></div>
+    <div class="blockt">Overview</div>
+    <div class="info-rows">
+      <div class="irow"><span class="k">Sample type</span><span class="v">Blood sample</span></div>
+      <div class="irow"><span class="k">Fasting</span><span class="v">${p.fasting?'10–12 hours required':'Not required'}</span></div>
+      <div class="irow"><span class="k">Reports in</span><span class="v">${p.report}</span></div>
+      <div class="irow"><span class="k">Age group</span><span class="v">All age groups</span></div>
+      <div class="irow"><span class="k">Collection</span><span class="v">Free home sample collection</span></div>
+    </div>
     <div class="blockt">Tests included (${p.tests})</div>
     <div class="pkg-incl">${p.includes.map(t=>`<div class="ii">${t}</div>`).join('')}</div>
     <div class="rx-note" style="margin-top:12px">🧪 A certified phlebotomist collects your sample at home. Reports are shared digitally in-app — no need to visit the lab.</div>
@@ -963,7 +996,7 @@ function openReport(id){const b=bookings.find(x=>x.id===id);if(!b)return;const p
 }
 function reportRows(p){const bank={'HbA1c':{u:'%',r:'4.0–5.6',v:'5.4',f:'n'},'Fasting Blood Sugar':{u:'mg/dL',r:'70–100',v:'96',f:'n'},'Total T3':{u:'ng/dL',r:'80–200',v:'128',f:'n'},'Total T4':{u:'µg/dL',r:'5.1–14.1',v:'9.2',f:'n'},'TSH Ultrasensitive':{u:'µIU/mL',r:'0.4–4.0',v:'4.6',f:'h'},'Total Cholesterol':{u:'mg/dL',r:'<200',v:'188',f:'n'},'Hemoglobin':{u:'g/dL',r:'13–17',v:'14.2',f:'n'},'Vitamin D (25-OH)':{u:'ng/mL',r:'30–100',v:'22',f:'l'},'Vitamin B12':{u:'pg/mL',r:'200–900',v:'410',f:'n'},'Complete Blood Count':{u:'',r:'Normal',v:'Normal',f:'n'},'Liver Function Test':{u:'',r:'Normal',v:'Normal',f:'n'},'Kidney Function Test':{u:'',r:'Normal',v:'Normal',f:'n'}};
   return p.includes.map((name)=>{const b=bank[name];if(b)return {name,val:b.v,unit:b.u,range:b.r,flag:b.f};return {name,val:'Normal',unit:'',range:'—',flag:'n'};});}
-function downloadReport(){showToast('Report PDF downloaded 📄');}
+function downloadReport(){if(curReport&&!curReport.paid){showToast('Pay to unlock the report first');return;}showToast('Report PDF downloaded 📄');}
 
 /* navigation */
 const NAV_IDX={'screen-home':0,'screen-categories':1,'screen-cart':2,'screen-account':3};
