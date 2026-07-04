@@ -6,7 +6,7 @@
 <title>KNM Medicine — Online Pharmacy & Medicine Delivery</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* Flutter-buildable: Container/BoxDecoration, LinearGradient, BoxShadow, ClipRRect, Image.network(cover),
      GridView, Wrap (chips), horizontal ListView, pinned SliverAppBar, bottom bar, Dialog(modal), Stepper.
@@ -15,10 +15,10 @@
     --blue:#1e9bd7; --blue-d:#0b7ec2; --sky:#5cc0ef; --blue-l:#e8f4fb; --blue-xl:#f1f8fc;
     --ink:#123549; --muted:#6d8ba0; --bg:#f1f8fc; --card:#fff; --line:#e1eef6;
     --green:#16a34a; --green-l:#e7f6ee; --amber:#d97706; --rx:#e2574c; --rx-l:#fdecea;
-    --shadow:0 6px 18px rgba(30,155,215,.12);
+    --shadow:0 2px 10px rgba(18,53,73,.07);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+  body{font-family:'Inter','Poppins',sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased}
   a{text-decoration:none;color:inherit} img{max-width:100%;display:block} button{font-family:inherit;cursor:pointer}
   input,select{font-family:inherit}
   .hidden{display:none!important}
@@ -301,7 +301,17 @@
   .labtrust{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
   .labtrust>div{display:flex;align-items:center;gap:8px;background:var(--green-l);color:#256b45;font-weight:700;font-size:11.5px;padding:10px 12px;border-radius:10px}
   .labtrust>div span{font-size:15px}
-  .pkg-badge{display:inline-block;background:#fff4e6;color:#b45309;font-weight:800;font-size:10px;padding:3px 8px;border-radius:6px;margin-top:6px}
+  .pkg-badge{display:inline-block;background:#fff4e6;color:#b45309;font-weight:800;font-size:10px;padding:3px 8px;border-radius:6px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.3px}
+  .offpill{background:var(--green-l);color:var(--green);font-weight:800;font-size:11px;padding:2px 8px;border-radius:999px}
+  .pkg-save{margin-top:10px;background:var(--green-l);color:#256b45;font-weight:700;font-size:11.5px;padding:8px 10px;border-radius:9px;text-align:center}
+  .labstats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 6px}
+  .labstats>div{text-align:center;border-right:1px solid var(--line)} .labstats>div:last-child{border:none}
+  .labstats b{font-size:12px;font-weight:800;color:var(--blue-d);display:block} .labstats small{font-size:9px;color:var(--muted);font-weight:600}
+  .howto{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+  .howto .hstep{text-align:center}
+  .howto .hn{width:40px;height:40px;border-radius:14px;background:var(--blue-l);display:grid;place-items:center;margin:0 auto 6px;font-size:20px}
+  .howto .ht{font-size:10px;font-weight:700;color:var(--ink);line-height:1.2}
+  .pkg-about{color:#4a5a6a;font-weight:500;font-size:13px;line-height:1.55;padding:0 2px}
   .book-field{margin-bottom:12px} .book-field label{font-weight:800;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px}
   .book-field input,.book-field select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;font-weight:600}
   .book-row{display:flex;gap:10px}
@@ -436,6 +446,14 @@
     <div class="subhead"><button class="back" onclick="goBack()">←</button><h2>Upload Prescription</h2></div>
     <div class="rx-wrap">
       <div class="rx-hero"><b>Order with a prescription 📄</b><p>Upload your doctor's prescription — our licensed pharmacist verifies it and prepares your order.</p></div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px">
+        <b style="font-size:13.5px">📋 For quick approval, please ensure:</b>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:12.5px;font-weight:600;color:#4a5a6a">✅ Doctor's name, patient's name &amp; clinic date are visible</div>
+          <div style="font-size:12.5px;font-weight:600;color:#4a5a6a">✅ Prescription is clear — not blurred or cropped</div>
+          <div style="font-size:12.5px;font-weight:600;color:#4a5a6a">✅ File is JPG, PNG or PDF (max 5 MB)</div>
+        </div>
+      </div>
       <div class="drop">
         <div class="de">🩺</div><b>Add your prescription</b><small>JPG, PNG or PDF · up to 5 MB</small>
         <div class="drop-btns">
@@ -561,6 +579,7 @@
   <nav id="bottomNav">
     <button class="on" onclick="go('screen-home')"><span class="bn-ic">🏠</span>Home</button>
     <button onclick="go('screen-categories')"><span class="bn-ic">🗂️</span>Categories</button>
+    <button onclick="go('screen-packages')"><span class="bn-ic">🧪</span>Lab Tests</button>
     <button onclick="go('screen-cart')"><span class="bn-ic">🛒<span class="badge" id="bnCart">0</span></span>Cart</button>
     <button onclick="go('screen-account')"><span class="bn-ic">👤</span>Account</button>
   </nav>
@@ -935,7 +954,11 @@ let curPkg=null,bkPkg=null,bkDate=isoIn(1),bkSlot='7 – 9 AM',curReport=null;
 const pkgDisc=p=>Math.round((p.mrp-p.price)/p.mrp*100);
 
 function renderPkgRail(){const el=$('pkgRail');if(!el)return;el.innerHTML=PACKAGES.slice(0,6).map(p=>`<div class="pkg-rc"><div class="pn">${p.icon} ${p.name}</div><div class="pm">${p.tests} tests · ${p.report}</div><div class="pp">${money(p.price)}<s>${money(p.mrp)}</s></div><button class="pb" onclick="openPackage(${p.id})">Book Now</button></div>`).join('');}
-function renderPackages(){$('pkgListContent').innerHTML='<div class="pad">'+PACKAGES.map(p=>`<div class="pkg-card"><div class="pkg-top"><div class="pkg-ic">${p.icon}</div><div style="flex:1"><div class="pkg-name">${p.name}</div><div class="pkg-meta">Includes ${p.tests} tests · Report ${p.report}</div><div class="pkg-tags"><span>🏠 Home collection</span><span>🕐 Reports ${p.report}</span>${p.fasting?'<span>🍽️ Fasting</span>':'<span>No fasting</span>'}</div></div></div><div class="pkg-bottom"><div class="pkg-price"><b>${money(p.price)}</b><s>${money(p.mrp)}</s> <span style="color:var(--green);font-weight:800;font-size:12px">${pkgDisc(p)}% off</span></div><button class="pkg-book" onclick="openPackage(${p.id})">Book Now</button></div></div>`).join('')+'</div>';}
+const pkgBadge=p=>p.tests>=60?'Best Value':p.tests>=45?'Top Selling':(p.mrp-p.price)>=700?'Big Saving':'';
+function renderPackages(){
+  const stats=`<div class="labstats"><div><b>NABL & CAP</b><small>Accredited labs</small></div><div><b>2000+</b><small>Phlebotomists</small></div><div><b>from 6 hrs</b><small>Report time</small></div><div><b>Free</b><small>Home collection</small></div></div>`;
+  $('pkgListContent').innerHTML='<div class="pad">'+stats+PACKAGES.map(p=>`<div class="pkg-card">${pkgBadge(p)?`<span class="pkg-badge">${pkgBadge(p)}</span>`:''}<div class="pkg-top"><div class="pkg-ic">${p.icon}</div><div style="flex:1"><div class="pkg-name">${p.name}</div><div class="pkg-meta">Includes ${p.tests} tests · Report ${p.report}</div><div class="pkg-tags"><span>🏠 Home collection</span><span>🕐 Reports ${p.report}</span>${p.fasting?'<span>🍽️ Fasting</span>':'<span>No fasting</span>'}</div></div></div><div class="pkg-bottom"><div class="pkg-price"><b>${money(p.price)}</b><s>${money(p.mrp)}</s> <span class="offpill">${pkgDisc(p)}% off</span></div><button class="pkg-book" onclick="openPackage(${p.id})">Book Now</button></div><div class="pkg-save">🎉 You save ${money(p.mrp-p.price)} on this package</div></div>`).join('')+'</div>';
+}
 function openPackage(id){const p=PACKAGES.find(x=>x.id===id);curPkg=p;
   $('pkgDetailContent').innerHTML=`<div class="pad">
     <div class="pkg-card" style="margin:0"><div class="pkg-top"><div class="pkg-ic" style="width:56px;height:56px;font-size:28px">${p.icon}</div><div style="flex:1"><div class="pkg-name" style="font-size:17px">${p.name}</div><div class="pkg-meta">${p.tests} tests included</div><div class="pkg-tags"><span>🏠 Home sample collection</span><span>📄 Report ${p.report}</span>${p.fasting?'<span>🍽️ 10–12 hrs fasting</span>':'<span>No fasting needed</span>'}</div></div></div>
@@ -955,8 +978,17 @@ function openPackage(id){const p=PACKAGES.find(x=>x.id===id);curPkg=p;
       <div><span>🏠</span>Free home collection</div>
       <div><span>🕐</span>Reports in ${p.report}</div>
     </div>
+    <div class="blockt">How home collection works</div>
+    <div class="howto">
+      <div class="hstep"><div class="hn">📅</div><div class="ht">Book &amp; pay online</div></div>
+      <div class="hstep"><div class="hn">🏠</div><div class="ht">Phlebotomist visits</div></div>
+      <div class="hstep"><div class="hn">💉</div><div class="ht">Painless sample</div></div>
+      <div class="hstep"><div class="hn">📄</div><div class="ht">Report in-app</div></div>
+    </div>
     <div class="blockt">Tests included (${p.tests})</div>
     <div class="pkg-incl">${p.includes.map(t=>`<div class="ii">${t}</div>`).join('')}</div>
+    <div class="blockt">Who should take this</div>
+    <p class="pkg-about">Recommended for routine health monitoring and early detection — ideal for adults and anyone managing ongoing conditions. Follow the fasting/preparation noted above. A free report consultation is included to help you understand your results.</p>
     <div class="rx-note" style="margin-top:12px">🧪 A trained phlebotomist collects your sample from home in ~30 minutes — safe &amp; hygienic. Reports are shared digitally in-app, no need to visit the lab.</div>
   </div>`;
   $('pkgBar').innerHTML=`<div class="price-min"><b>${money(p.price)}</b><small>${p.tests} tests</small></div><button onclick="startBooking(${p.id})">Book Home Collection</button>`;
@@ -1010,7 +1042,7 @@ function reportRows(p){const bank={'HbA1c':{u:'%',r:'4.0–5.6',v:'5.4',f:'n'},'
 function downloadReport(){if(curReport&&!curReport.paid){showToast('Pay to unlock the report first');return;}showToast('Report PDF downloaded 📄');}
 
 /* navigation */
-const NAV_IDX={'screen-home':0,'screen-categories':1,'screen-cart':2,'screen-account':3};
+const NAV_IDX={'screen-home':0,'screen-categories':1,'screen-packages':2,'screen-cart':3,'screen-account':4};
 function applyChrome(id){
   $('appHeader').classList.toggle('hidden',id!=='screen-home');
   const showNav=(id in NAV_IDX)&&id!=='screen-cart';
